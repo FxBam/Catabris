@@ -1,3 +1,7 @@
+<?php
+require_once "../bdd/connexion_bdd.php";
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -39,7 +43,7 @@
     </main>
     <script>
         $(function() {
-            $("#navBar").load("navBar.html");
+            $("#navBar").load("navBar.php");
         });
     </script>
 </body>
