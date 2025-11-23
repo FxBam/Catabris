@@ -18,7 +18,7 @@ Vous pourrez :
 ---
 
 ## 📥 Installation
-- git clone https://github.com/YOUR-USERNAME/Catabris.git
+- git clone https://github.com/FxBam/Catabris.git
 - cd Catabris
 
 ---
