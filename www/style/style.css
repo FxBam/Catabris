@@ -302,4 +302,20 @@ main h3 {
         height: 300px;              /* hauteur fixe sur mobile pour éviter le dépassement */
         border-radius: 6px;
     }
+
+    nav a {
+        margin: 0 0.5rem; /* réduit l’espace horizontal entre les liens */
+    }
+
+    .nav-links {
+        margin-right: 0;
+        margin-left: 0;
+
+    }
+
+    nav .logo a {
+        margin-left: 0;
+        margin-right: 10px;
+    }
+
 }
