@@ -39,7 +39,7 @@ require_once "../bdd/connexion_bdd.php";
 
             <button type="submit">S'inscrire</button>
         </form>
-        <p>Vous avez déjà un compte ? <a href="connexion.html">Connectez-vous</a></p>
+        <p>Vous avez déjà un compte ? <a href="connexion.php">Connectez-vous</a></p>
     </main>
     <script>
         $(function() {

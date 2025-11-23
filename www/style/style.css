@@ -101,7 +101,6 @@ main p a:hover {
     text-decoration: underline;
 }
 
-/* Styles spécifiques pour la page d'accueil */
 main {
     padding: 2rem;
     text-align: center;
@@ -116,9 +115,28 @@ main h1 {
     margin-bottom: 1rem;
 }
 
-/* Style temporaire pour déboguer l'inclusion de navBar */
+/* Style pour l'inclusion de la navBar */
 [w3-include-html] {
-    min-height: 50px; /* Hauteur minimale pour rendre la div visible */
-    background-color: #f8d7da; /* Couleur de fond pour la repérer */
-    border: 1px dashed red; /* Bordure pour la visibilité */
+    min-height: 50px;
+    background-color: #f8d7da;
+    border: 1px dashed red;
+}
+
+/* Style pour le lien "Mot de passe oublié ?" */
+.mdpOublie {
+    text-align: right;
+    margin: 0 0 10px 2px;
+    font-size: 12px;
+}
+
+.mdpOublie a {
+    color: #555;
+    text-decoration: none;
+    opacity: 0.8;
+    font-size: 12px;
+}
+
+.mdpOublie a:hover {
+    opacity: 1;
+    text-decoration: black;
 }

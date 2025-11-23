@@ -22,9 +22,13 @@ require_once "../bdd/connexion_bdd.php";
             <label for="password">Mot de passe :</label>
             <input type="password" id="password" name="password" required>
 
+            <p class="mdpOublie">
+                <a href="#">Mot de passe oublié ?</a>
+            <p>
+
             <button type="submit">Se connecter</button>
         </form>
-        <p><a href="#">Mot de passe oublié ?</a></p>
+        <p>Vous avez déjà un compte ? <a href="inscription.php">Inscrivez-vous</a></p>
     </main>
     <script>
         $(function() {
