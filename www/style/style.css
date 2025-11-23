@@ -24,21 +24,22 @@ nav a {
     font-weight: bold;
 }
 
-nav a:hover {
-    text-decoration: underline;
-}
-
 .nav-links {
     display: flex;
 }
 
+.nav-links a:hover {
+    opacity: 0.7;
+}
+
 /* Section principale */
 main {
+    flex: 1;
     padding: 2rem;
-    text-align: center;
+    text-align: left;
     background-color: #e8f5e9;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
 main h1 {
@@ -103,10 +104,13 @@ main p a:hover {
 
 main {
     padding: 2rem;
-    text-align: center;
+    text-align: center;           /* centre le texte à l'intérieur */
     background-color: #e8f5e9;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin: 0 auto;               /* centre horizontalement */
+    display: fixed;
+    flex-direction: column;
 }
 
 main h1 {
@@ -139,4 +143,84 @@ main h1 {
 .mdpOublie a:hover {
     opacity: 1;
     text-decoration: black;
+}
+
+.container {
+    display: flex;
+    min-height: calc(100vh - 60px);
+}
+
+/* Control panel*/
+.controlPanel {
+    width: 50px;
+    flex-shrink: 0;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.controlPanel ul {
+    list-style: none;
+    padding: 0;
+    margin: 50px 0 0 0;
+    align-self: center;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.controlPanel li {
+    margin-bottom: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.controlPanel a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.controlPanel a:hover {
+    color: #007bff;
+}
+
+.cp-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;               /* prend toute la largeur du panneau */
+    height: 40px;               /* hauteur de chaque bouton */
+    margin: 5px 0;              /* espace entre boutons */
+    background-color: transparent;
+    border: none;
+    color: #333;
+    font-size: 16px;            /* taille des icônes */
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+/* Effet au survol */
+.cp-btn:hover {
+    background-color: #ddd;
+    color: #007bff;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Option : si tu veux ajouter du texte à côté des icônes */
+.cp-btn span {
+    display: none;             /* caché par défaut */
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+/* Exemple : afficher le texte au hover */
+.cp-btn:hover span {
+    display: inline;
 }

@@ -8,17 +8,22 @@ require_once "../bdd/connexion_bdd.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Catabris</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 </head>
 <body>
     <div id="navBar"></div>
-    <main>
-        <h1>Bienvenue sur Catabris</h1>
-    </main>
+    <div class="container">
+        <div id="controlPanel" class="controlPanel"></div>
+        <main>
+            <h1>Bienvenue sur Catabris</h1>
+        </main>
+    </div>
     <script>
         $(function() {
             $("#navBar").load("navBar.php");
+            $("#controlPanel").load("controlPanel.php");
         });
     </script>
 </body>
