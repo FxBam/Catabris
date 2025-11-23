@@ -85,7 +85,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<script>alert('Adresse email invalide.');</script>";
         exit;
     }
-
     
     $stmt = $bdd->prepare("SELECT COUNT(*) FROM utilisateurs WHERE adresse_mail = ?");
     $stmt->execute([$email]);

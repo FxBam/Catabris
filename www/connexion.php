@@ -37,3 +37,35 @@ require_once "../bdd/connexion_bdd.php";
     </script>
 </body>
 </html>
+
+<?php
+session_start();
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $stmt = $bdd->prepare("SELECT * FROM utilisateurs WHERE adresse_mail = :email");
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (empty($email) || empty($password)) {
+        echo "<p style='color:red;'>Veuillez remplir tous les champs.</p>";
+        exit;
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        echo "<script>alert('Adresse email invalide.');</script>";
+        exit;
+    }
+
+    if ($user && password_verify($password, $user['mot_de_passe'])) {
+        $_SESSION['user'] = $user;
+        echo "<script>alert('Connexion réussie !');</script>";
+        header("Location: index.php");
+        exit();
+    } else {
+        echo "<p style='color:red;'>Adresse email ou mot de passe incorrect.</p>";
+    }
+}
+?>

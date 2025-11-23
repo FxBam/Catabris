@@ -1,5 +1,5 @@
 CREATE TABLE equipements_sportifs (
-    id VARCHAR(50) PRIMARY KEY,
+    id VARCHAR(50) PRIMARY KEY, --Id present dans le json de l'api
     
     uai VARCHAR(20),
     nom VARCHAR(255),
@@ -21,8 +21,8 @@ CREATE TABLE equipements_sportifs (
     mail VARCHAR(255),
     telephone VARCHAR(50),
     site_web VARCHAR(255),
-    accessibilite VARCHAR(255),
-    observations TEXT,
+    accessibilite VARCHAR(255), --Données d'accessibilité PMR
+    observations TEXT, --Données suplémentaires
     
     imported_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
