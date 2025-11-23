@@ -2,6 +2,22 @@
 require_once "../bdd/connexion_bdd.php";
 ?>
 
+<?php
+$sql = "SELECT latitude, longitude, nom FROM equipements_sportifs";
+$stmt = $bdd->prepare($sql);
+$stmt->execute();
+
+$points = [];
+
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    $points[] = [
+        'latitude'  => (float)$row['latitude'],
+        'longitude' => (float)$row['longitude'],
+        'nom'       => $row['nom']
+    ];
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -27,16 +43,35 @@ require_once "../bdd/connexion_bdd.php";
                                 const container = document.querySelector('.osm_canvas');
                                 const width = container.clientWidth;
                                 const height = container.clientHeight - 100;
-                                
-                                document.getElementById('osm_canvas').contentDocument.write('<link rel = "stylesheet" href = "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.min.css" />');
-                                document.getElementById('osm_canvas').contentDocument.write('<script src = "https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.min.js"><\/script>');
-                                document.getElementById('osm_canvas').contentDocument.write('<div id ="osm-map" style = "width:' + width + 'px; height:' + height + 'px;"></div>');
-                                document.getElementById('osm_canvas').contentDocument.write('<script>var map = L.map("osm-map").setView([48.8566, 2.3522], 12);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom: 19,attribution: \'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors\'}).addTo(map);<\/script>');
-                                document.getElementById('osm_canvas').contentDocument.close();
+
+                                const iframeDoc = document.getElementById('osm_canvas').contentDocument;
+                                iframeDoc.open();
+                                iframeDoc.write(`
+                                    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.min.css" />
+                                    <div id="osm-map" style="width:${width}px; height:${height}px;"></div>
+                                    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.min.js"><\/script>
+                                    <script>
+                                        var map = L.map("osm-map").setView([48.8566, 2.3522], 12);
+                                        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                                            maxZoom: 19,
+                                            attribution: '&copy; OpenStreetMap contributors'
+                                        }).addTo(map);
+
+                                        var lieux = ${JSON.stringify(<?php echo json_encode($points); ?>)};
+                                        lieux.forEach(function(lieu) {
+                                            L.marker([lieu.latitude, lieu.longitude])
+                                            .addTo(map)
+                                            .bindPopup(lieu.nom);
+                                        });
+                                    <\/script>
+                                `);
+                                iframeDoc.close();
                             }
                             
                             window.addEventListener('load', resizeIframe);
                             window.addEventListener('resize', resizeIframe);
+
+                            
                         </script>
                     </div>
                 </div> 
