@@ -4,54 +4,54 @@ require_once "../bdd/connexion_bdd.php";
 
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <title>Inscription</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-</head>
-<body>
-    <div id="navBar"></div>
-    <div class="container">
-        <div id="controlPanel" class="controlPanel"></div>
-        <main>
-            <h1>Inscription</h1>
-            <form action="#" method="POST" class="form-container">
-                <label for="nom">Nom :</label>
-                <input type="text" id="nom" name="nom" required>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="style/style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <title>Inscription</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <div id="navBar"></div>
+        <div class="container">
+            <div id="controlPanel" class="controlPanel"></div>
+            <main>
+                <h1>Inscription</h1>
+                <form action="#" method="POST" class="form-container">
+                    <label for="nom">Nom :</label>
+                    <input type="text" id="nom" name="nom" required>
 
-                <label for="prenom">Prénom :</label>
-                <input type="text" id="prenom" name="prenom" required>
+                    <label for="prenom">Prénom :</label>
+                    <input type="text" id="prenom" name="prenom" required>
 
-                <label for="adresse">Adresse :</label>
-                <input type="text" id="adresse" name="adresse" required>
+                    <label for="adresse">Adresse :</label>
+                    <input type="text" id="adresse" name="adresse" required>
 
-                <label for="code-postal">Code Postal :</label>
-                <input type="text" id="code-postal" name="code-postal" required>
+                    <label for="code-postal">Code Postal :</label>
+                    <input type="text" id="code-postal" name="code-postal" required>
 
-                <label for="email">Adresse Email :</label>
-                <input type="email" id="email" name="email" required>
+                    <label for="email">Adresse Email :</label>
+                    <input type="email" id="email" name="email" required>
 
-                <label for="password">Mot de passe :</label>
-                <input type="password" id="password" name="password" required>
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" required>
 
-                <label for="confirm-password">Confirmer le mot de passe :</label>
-                <input type="password" id="confirm-password" name="confirm-password" required>
+                    <label for="confirm-password">Confirmer le mot de passe :</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
 
-                <button type="submit">S'inscrire</button>
-            </form>
-            <p>Vous avez déjà un compte ? <a href="connexion.php">Connectez-vous</a></p>
-        </main>
-    </div>
-    <script>
-        $(function() {
-            $("#navBar").load("navBar.php");
-            $("#controlPanel").load("controlPanel.php");
-        });
-    </script>
-</body>
+                    <button type="submit">S'inscrire</button>
+                </form>
+                <p>Vous avez déjà un compte ? <a href="connexion.php">Connectez-vous</a></p>
+            </main>
+        </div>
+        <script>
+            $(function() {
+                $("#navBar").load("navBar.php");
+                $("#controlPanel").load("controlPanel.php");
+            });
+        </script>
+    </body>
 </html>
 
 <?php
