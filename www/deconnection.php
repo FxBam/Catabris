@@ -26,25 +26,24 @@ $user = $_SESSION['user'];
         <div id="navBar"></div>
         <div class="container">
             <div id="controlPanel" class="controlPanel"></div>
-                <main>
-                    <h1>Déconnexion</h1>
+            <main>
+                <h1>Déconnexion</h1>
 
-                    <div class="form-container">
-                        <p style="font-size:1.2em;">
-                            Bonjour <strong><?= htmlspecialchars($user['prenom']) ?> <?= htmlspecialchars($user['nom']) ?></strong> 👋
-                        </p>
+                <div class="form-container">
+                    <p style="font-size:1.2em;">
+                        Bonjour <strong><?= htmlspecialchars($user['prenom']) ?> <?= htmlspecialchars($user['nom']) ?></strong> 👋
+                    </p>
 
-                        <p>Vous voulez vraiment nous quitter ?</p>
+                    <p>Vous voulez vraiment nous quitter ?</p>
 
-                        <div class="logout-buttons">
-                            <form action="logout.php" method="post" style="display:inline;">
-                                <button type="submit">Se déconnecter</button>
-                            </form>
-                                <a href="index.php" class="cp-btn">Annuler</a>
-                        </div>
+                    <div class="logout-buttons">
+                        <form action="logout.php" method="post" style="display:inline;">
+                            <button type="submit">Se déconnecter</button>
+                        </form>
+                        <a href="index.php" class="cp-btn">Annuler</a>
                     </div>
-                </main>
-            </div>
+                </div>
+            </main>
         </div>
         <script>
             $(function() {

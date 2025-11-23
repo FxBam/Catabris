@@ -281,6 +281,65 @@ main h3 {
     display: block;
 }
 
+/*Style pour la page Contact*/
+body.contact-page {
+    height: 100vh;
+    overflow: hidden;
+}
+
+body.contact-page main {
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
+.info-section {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+.info-section h2,
+.info-section h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+.info-section p {
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.info-section ul {
+    margin-bottom: 1rem;
+    padding-left: 1.2rem;
+}
+
+.info-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+
+.info-section table th,
+.info-section table td {
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.info-section table th {
+    background-color: #f0f0f0;
+}
+
+/* Responsive*/
 @media (max-width: 768px) {
 
     nav a {
