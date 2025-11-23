@@ -283,28 +283,8 @@ main h3 {
 
 @media (max-width: 768px) {
 
-    .card {
-        padding: 1rem;
-        border-radius: 6px;
-    }
-
-    .mapouter {
-        height: auto;               /* la carte s’adapte en hauteur */
-        min-height: 300px;          /* mais reste visible */
-    }
-
-    .osm_canvas {
-        height: auto;
-        min-height: 300px;
-    }
-
-    .osm_canvas iframe {
-        height: 300px;              /* hauteur fixe sur mobile pour éviter le dépassement */
-        border-radius: 6px;
-    }
-
     nav a {
-        margin: 0 0.5rem; /* réduit l’espace horizontal entre les liens */
+        margin: 0 0.5rem;
     }
 
     .nav-links {
