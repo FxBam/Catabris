@@ -3,17 +3,24 @@ require_once "../bdd/connexion_bdd.php";
 ?>
 
 <?php
-$sql = "SELECT latitude, longitude, nom FROM equipements_sportifs";
+$sql = "SELECT latitude, longitude, nom, proprietaire, type_equipement, accessibilite, adresse, commune, mail, telephone, site_web FROM equipements_sportifs";
 $stmt = $bdd->prepare($sql);
 $stmt->execute();
 
 $points = [];
-
 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     $points[] = [
-        'latitude'  => (float)$row['latitude'],
-        'longitude' => (float)$row['longitude'],
-        'nom'       => $row['nom']
+        'latitude'        => (float) $row['latitude'],
+        'longitude'       => (float) $row['longitude'],
+        'nom'             => (string) $row['nom'],
+        'proprietaire'    => (string) $row['proprietaire'],
+        'type_equipement' => (string) $row['type_equipement'],
+        'accessibilite'   => (string) $row['accessibilite'],
+        'adresse'         => (string) $row['adresse'],
+        'commune'         => (string) $row['commune'],
+        'mail'            => (string) $row['mail'],
+        'telephone'       => (string) $row['telephone'],
+        'site_web'        => (string) $row['site_web']
     ];
 }
 ?>
@@ -62,7 +69,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                             left: 2%;
                                             width: 80%;
                                             max-width: 300px;
-                                            max-height: 300px;
+                                            max-height: 600px;
                                             background-color: white;
                                             box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
                                             border-top-left-radius: 10px;
@@ -105,8 +112,16 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                             marker.on('click', function() {
                                                 document.getElementById('panel-content').innerHTML = \`
                                                     <h2>\${lieu.nom}</h2>
-                                                    <p>Latitude: \${lieu.latitude}</p>
-                                                    <p>Longitude: \${lieu.longitude}</p>
+                                                    <p>
+                                                        proprietaire : \${lieu.proprietaire}<br>
+                                                        type_equipement : \${lieu.type_equipement}<br>
+                                                        accessibilite : \${lieu.accessibilite}<br>
+                                                        adresse : \${lieu.adresse}<br>
+                                                        commune : \${lieu.commune}<br>
+                                                        mail : \${lieu.mail}<br>
+                                                        telephone : \${lieu.telephone}<br>
+                                                        site_web : \${lieu.site_web}
+                                                    </p>
                                                 \`;
                                                 document.getElementById('bottom-panel').classList.add('active');
                                             });
