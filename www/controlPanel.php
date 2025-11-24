@@ -12,7 +12,7 @@ if (isset($_SESSION['user'])) {
     <ul>
         <li><a href="index.php" title="Accueil"><i class="fa fa-home"></i></a></li>
 
-        <?php if (isset($_SESSION['user']) && !empty($user_id)): ?>
+        <?php if (isset($_SESSION['user'])): ?>
             <li><a href="profil.php" title="Profil"><i class="fa fa-user"></i></a></li>
             <li><a href="#" title="Favoris"><i class="fa fa-bell"></i></a></li>
         <?php else: ?>
