@@ -5,7 +5,7 @@ body {
     padding: 0;
     background-color: #f4f4f9;
     color: #333;
-    overflow: hidden;
+    overflow : auto;
 }
 
 /* Barre de navigation */
@@ -284,7 +284,6 @@ main h3 {
 /*Style pour la page Contact*/
 body.contact-page {
     height: 100vh;
-    overflow: hidden;
 }
 
 body.contact-page main {

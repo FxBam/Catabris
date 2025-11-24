@@ -105,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p>Vous avez déjà un compte ? <a href="connexion.php">Connectez-vous</a></p>
             </main>
         </div>
-        <script>
+        <script>    
             $(function() {
                 $("#navBar").load("navBar.php");
                 $("#controlPanel").load("controlPanel.php");
