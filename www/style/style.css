@@ -464,6 +464,17 @@ body.dashboard-page main {
     background-color: #555;
 }
 
+.compte-admin-checkbox label {
+    display: fixed;
+    align-items: center; /* Correct syntaxe */
+    gap: 0.5rem;
+}
+
+.compte-admin-checkbox span {
+    display: inline-block; /* Assure que le texte reste sur la même ligne */
+}
+
+
 /* Responsive*/
 @media (max-width: 768px) {
 
@@ -489,5 +500,16 @@ body.dashboard-page main {
 
     .stat-box {
         width: 80%;
+    }
+
+    .search-section table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap; /* Empêche le passage en colonne */
+    }
+
+    .search-section table th,
+    .search-section table td {
+        min-width: 120px; /* Chaque colonne a une largeur minimale */
     }
 }
