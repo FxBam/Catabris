@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    VALUES (?, ?, ?, ?, ?, ?)");
 
             if ($stmt->execute([$nom, $prenom, $adresse, $code_postal, $email, $hashed])) {
-                echo "<script>alert('Inscription réussie !'); window.location.href='connexion.php';</script>";
+                header('Location: connexion.php');
                 exit;
             } else {
                 $error_message = "Erreur lors de l'inscription.";
