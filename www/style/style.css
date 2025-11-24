@@ -83,6 +83,22 @@ main p {
     border-radius: 4px;
 }
 
+#form-error {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    background: #ffe8e5;
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: #b80000;
+    margin-bottom: 20px;
+    border: 1px solid #e0a4a4;
+}
+
+#form-error .icon {
+    font-size: 20px;
+}
+
 button {
     background-color: #333;
     color: white;

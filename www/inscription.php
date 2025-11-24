@@ -1,62 +1,67 @@
 <?php
 require_once "../bdd/connexion_bdd.php";
 session_start();
-?>
 
-<?php
+$error_message = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $nom = strtolower($_POST['nom']);
-    $prenom = strtolower($_POST['prenom']);
-    $adresse = strtolower($_POST['adresse']);
-    $code_postal = $_POST['code-postal'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $confirm_password = $_POST['confirm-password'];
+    $nom = strtolower(trim($_POST['nom']));
+    $prenom = strtolower(trim($_POST['prenom']));
+    $adresse = strtolower(trim($_POST['adresse']));
+    $code_postal = trim($_POST['code-postal']);
+    $email = trim($_POST['email']);
+    $password = trim($_POST['password']);
+    $confirm_password = trim($_POST['confirm-password']);
 
-    if (empty($nom) || empty($prenom) || empty($adresse) || empty($code_postal) || empty($email) || empty($password) || empty($confirm_password)) {
-        echo "<script>alert('Veuillez remplir tous les champs.');</script>";
-        exit;
+    if (
+        empty($nom) || empty($prenom) || empty($adresse) ||
+        empty($code_postal) || empty($email) ||
+        empty($password) || empty($confirm_password)
+    ) {
+        $error_message = "Veuillez remplir tous les champs.";
     }
 
-    if (strlen($nom) > 50 || strlen($prenom) > 50 || strlen($adresse) > 200 || strlen($email) > 100) {
-        echo "<script>alert('Le nom et le prénom ne doivent pas dépasser 50 caractères.');</script>";
-        exit;
+    elseif (strlen($nom) > 50 || strlen($prenom) > 50 || strlen($adresse) > 200 || strlen($email) > 100) {
+        $error_message = "Un des champs dépasse la longueur maximale autorisée.";
     }
 
-    if (ctype_digit($nom) || ctype_digit($prenom)) {
-        echo "<script>alert('Le nom et le prénom ne doivent pas contenir de chiffres.');</script>";
-        exit;
-    }
-    
-    if (!ctype_digit($code_postal)|| strlen($code_postal) != 5) {
-        echo "<script>alert('Code postal invalide.');</script>";
-        exit;
+    elseif (ctype_digit($nom) || ctype_digit($prenom)) {
+        $error_message = "Le nom et le prénom ne doivent pas contenir de chiffres.";
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<script>alert('Adresse email invalide.');</script>";
-        exit;
-    }
-    
-    $stmt = $bdd->prepare("SELECT COUNT(*) FROM utilisateurs WHERE adresse_mail = ?");
-    $stmt->execute([$email]);
-    if ($stmt->fetchColumn() > 0) {
-        echo "<script>alert('Cette adresse email est déjà utilisée.');</script>";
-        exit;
+    elseif (!ctype_digit($code_postal) || strlen($code_postal) != 5) {
+        $error_message = "Code postal invalide.";
     }
 
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = "Adresse email invalide.";
+    }
 
-    if ($password !== $confirm_password) {
-        echo "<script>alert('Les mots de passe ne correspondent pas.');</script>";
-    } else {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+    else {
+        $stmt = $bdd->prepare("SELECT COUNT(*) FROM utilisateurs WHERE adresse_mail = ?");
+        $stmt->execute([$email]);
 
-        $stmt = $bdd->prepare("INSERT INTO utilisateurs (nom, prenom, adresse, code_postal, adresse_mail, mot_de_passe) VALUES (?, ?, ?, ?, ?, ?)");
-        if ($stmt->execute([$nom, $prenom, $adresse, $code_postal, $email, $hashed_password])) {
-            echo "<script>alert('Inscription réussie ! Vous pouvez maintenant vous connecter.'); window.location.href='connexion.php';</script>";
-        } else {
-            echo "<script>alert('Erreur lors de l\'inscription. Veuillez réessayer.');</script>";
+        if ($stmt->fetchColumn() > 0) {
+            $error_message = "Cette adresse email est déjà utilisée.";
+        }
+
+        elseif ($password !== $confirm_password) {
+            $error_message = "Les mots de passe ne correspondent pas.";
+        }
+
+        else {
+            $hashed = password_hash($password, PASSWORD_BCRYPT);
+
+            $stmt = $bdd->prepare("INSERT INTO utilisateurs (nom, prenom, adresse, code_postal, adresse_mail, mot_de_passe)
+                                   VALUES (?, ?, ?, ?, ?, ?)");
+
+            if ($stmt->execute([$nom, $prenom, $adresse, $code_postal, $email, $hashed])) {
+                echo "<script>alert('Inscription réussie !'); window.location.href='connexion.php';</script>";
+                exit;
+            } else {
+                $error_message = "Erreur lors de l'inscription.";
+            }
         }
     }
 }
@@ -78,34 +83,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div id="controlPanel" class="controlPanel"></div>
             <main>
                 <h1>Inscription</h1>
+
+                <div id="form-error">
+                    <span class="icon">⚠️</span>
+                    <span id="error-message"></span>
+                </div>
+
                 <form action="#" method="POST" class="form-container">
-                    <label for="nom">Nom :</label>
-                    <input type="text" id="nom" name="nom" required>
+                    <label>Nom :</label>
+                    <input type="text" name="nom">
 
-                    <label for="prenom">Prénom :</label>
-                    <input type="text" id="prenom" name="prenom" required>
+                    <label>Prénom :</label>
+                    <input type="text" name="prenom">
 
-                    <label for="adresse">Adresse :</label>
-                    <input type="text" id="adresse" name="adresse" required>
+                    <label>Adresse :</label>
+                    <input type="text" name="adresse">
 
-                    <label for="code-postal">Code Postal :</label>
-                    <input type="text" id="code-postal" name="code-postal" required>
+                    <label>Code postal :</label>
+                    <input type="text" name="code-postal">
 
-                    <label for="email">Adresse Email :</label>
-                    <input type="email" id="email" name="email" required>
+                    <label>Email :</label>
+                    <input type="email" name="email">
 
-                    <label for="password">Mot de passe :</label>
-                    <input type="password" id="password" name="password" required>
+                    <label>Mot de passe :</label>
+                    <input type="password" name="password">
 
-                    <label for="confirm-password">Confirmer le mot de passe :</label>
-                    <input type="password" id="confirm-password" name="confirm-password" required>
+                    <label>Confirmer le mot de passe :</label>
+                    <input type="password" name="confirm-password">
 
-                    <button type="submit">S'inscrire</button>
+                    <button type="submit">Créer mon compte</button>
                 </form>
                 <p>Vous avez déjà un compte ? <a href="connexion.php">Connectez-vous</a></p>
+
+                <script>
+                    function showError(message) {
+                        const box = document.getElementById("form-error");
+                        const msg = document.getElementById("error-message");
+
+                        msg.textContent = message;
+                        box.style.display = "flex";
+
+                        setTimeout(() => {
+                            box.style.display = "none";
+                        }, 4000);
+                    }
+                </script>
+                <?php if (!empty($error_message)) : ?>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            showError("<?= $error_message ?>");
+                        });
+                    </script>
+                <?php endif; ?>
             </main>
         </div>
-        <script>    
+        <script>
             $(function() {
                 $("#navBar").load("navBar.php");
                 $("#controlPanel").load("controlPanel.php");

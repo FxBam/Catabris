@@ -10,7 +10,7 @@ session_start();
     <div class="nav-links">
         <a href="index.php">Accueil</a>
         <?php if (isset($_SESSION['user'])): ?>
-                <a href="deconnection.php">Deconnection</a>
+                <a href="deconnexion.php">Déconnexion</a>
         <?php else: ?>
                 <a href="connexion.php">Connexion</a>
                 <a href="inscription.php">Inscription</a>
