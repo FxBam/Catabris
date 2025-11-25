@@ -23,6 +23,8 @@ if (!$equip) {
     exit;
 }
 
+$error_message = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'];
     $type_equipement = $_POST['type_equipement'];
@@ -30,11 +32,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $adresse = $_POST['adresse'];
     $commune = $_POST['commune'];
 
-    $stmt = $bdd->prepare("UPDATE equipements_sportifs SET nom = ?, type_equipement = ?, proprietaire = ?, adresse = ?, commune = ? WHERE id = ?");
-    $stmt->execute([$nom, $type_equipement, $proprietaire, $adresse, $commune, $id]);
+    if (empty($nom) || empty($type_equipement) || empty($proprietaire) || empty($adresse) || empty($commune)) {
+        $error_message="Veuillez saisir toutes les données.";
+    }
 
-    header("Location: dashboard.php");
-    exit;
+    if (strlen($nom) > 100 || strlen($type_equipement) > 100 || strlen($proprietaire) > 100 || strlen($adresse) > 200 || strlen($commune) > 100) {
+        $error_message = "Un des champs dépasse la longueur maximale autorisée.";
+    }
+
+    if (empty($error_message)) {
+        $stmt = $bdd->prepare("UPDATE equipements_sportifs SET nom = ?, type_equipement = ?, proprietaire = ?, adresse = ?, commune = ? WHERE id = ?");
+        $stmt->execute([$nom, $type_equipement, $proprietaire, $adresse, $commune, $id]);
+
+        header("Location: dashboard.php");
+        exit;
+    }
 }
 ?>
 
@@ -54,6 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div id="controlPanel" class="controlPanel"></div>
             <main>
                 <h1>Modifier équipement</h1>
+
+                <div id="form-error">
+                    <span class="icon">⚠️</span>
+                    <span id="error-message"></span>
+                </div>
+
                 <form method="POST" class="form-container">
                     <label>Nom</label>
                     <input type="text" name="nom" value="<?= htmlspecialchars($equip['nom']) ?>" required>
@@ -73,6 +91,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit">Enregistrer</button>
                     <a href="dashboard.php" class="cp-btn">Annuler</a>
                 </form>
+                
+                <script>
+                    function showError(message) {
+                        const box = document.getElementById("form-error");
+                        const msg = document.getElementById("error-message");
+
+                        msg.textContent = message;
+                        box.style.display = "flex";
+
+                        setTimeout(() => {
+                            box.style.display = "none";
+                        }, 4000);
+                    }
+                </script>
+                <?php if (!empty($error_message)) : ?>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            showError("<?= $error_message ?>");
+                        });
+                    </script>
+                <?php endif; ?>
             </main>
         </div>
         <script>
