@@ -21,8 +21,8 @@ $users_result = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['search_equipement'])) {
     $search_equip = '%' . $_POST['search_equipement'] . '%';
-    $stmt = $bdd->prepare("SELECT * FROM equipements_sportifs WHERE nom LIKE ?");
-    $stmt->execute([$search_equip]);
+    $stmt = $bdd->prepare("SELECT * FROM equipements_sportifs WHERE nom LIKE ? or commune LIKE ?");
+    $stmt->execute([$search_equip, $search_equip]);
     $equipements_result = $stmt->fetchAll(PDO::FETCH_ASSOC);    
 }
 
