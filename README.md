@@ -32,8 +32,8 @@ Vous pourrez :
 
 ### Fichiers importants
 - `connexion.php` — connexion PDO à la base  
-- `/src` — pages PHP et logique du site  
-- `/assets` — CSS / JS / images  
+- `/www` — pages PHP et html du site  
+- `/sql` — tables et connexion BDD
 
 ---
 
