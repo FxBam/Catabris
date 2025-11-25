@@ -1,8 +1,7 @@
 <?php
 require_once "../bdd/connexion_bdd.php";
-?>
+session_start();
 
-<?php
 $sql = "SELECT latitude, longitude, nom, proprietaire, type_equipement, accessibilite, adresse, commune, mail, telephone, site_web FROM equipements_sportifs";
 $stmt = $bdd->prepare($sql);
 $stmt->execute();

@@ -2,40 +2,34 @@
 require_once "../bdd/connexion_bdd.php";
 session_start();
 
+if (!isset($_SESSION['user'])) {
+    header("Location: index.php");
+    exit;
+}
+
+$user = $_SESSION['user'];
+
 $error_message = '';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+if (isset($_POST['supprimer'])) {
+    $email = trim($_POST['email'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
     if (empty($email) || empty($password)) {
         $error_message = "Veuillez remplir tous les champs.";
+    } elseif ($email !== $user['adresse_mail']) {
+        $error_message = "Email incorrect.";
+    } elseif (!password_verify($password, $user['mot_de_passe'])) {
+        $error_message = "Mot de passe incorrect.";
     }
 
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error_message = "Adresse email au format invalide.";
-    }
-
-    elseif (strlen($email) > 100) {
-        $error_message = "L'adresse email dépasse la longueur maximale autorisée.";
-    }
-
-    else {
-        $stmt = $bdd->prepare("SELECT * FROM utilisateurs WHERE adresse_mail = :email");
-        $stmt->bindParam(':email', $email);
+    if (empty($error_message)) {
+        $stmt = $bdd->prepare("DELETE FROM utilisateurs WHERE adresse_mail = :email");
+        $stmt->bindParam(':email', $user['adresse_mail']);
         $stmt->execute();
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if ($user && password_verify($password, $user['mot_de_passe'])) {
-            $_SESSION['user'] = $user;
-            $_SESSION['email'] = $user['adresse_mail'];
-
-            header("Location: index.php");
-            exit;
-        } else {
-            $error_message = "Adresse email ou mot de passe incorrect.";
-        }
+        session_destroy();
+        header("Location: index.php");
+        exit;
     }
 }
 ?>
@@ -47,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="style/style.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <title>Connexion</title>
+        <title>Profil</title>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     </head>
     <body>
@@ -55,27 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="container">
             <div id="controlPanel" class="controlPanel"></div>
             <main>
-                <h1>Connexion</h1>
+                <h1>Bienvenue <?= htmlspecialchars($user['prenom'] . " " . $user['nom']); ?></h1>
+                <h2>Supprimer mon compte</h2>
 
                 <div id="form-error">
                     <span class="icon">⚠️</span>
                     <span id="error-message"></span>
                 </div>
 
-                <form action="#" method="POST" class="form-container">
-                    <label for="email">Adresse Email :</label>
-                    <input type="email" id="email" name="email">
-
-                    <label for="password">Mot de passe :</label>
-                    <input type="password" id="password" name="password">
-
-                    <p class="mdpOublie">
-                        <a href="#">Mot de passe oublié ?</a>
-                    <p>
-
-                    <button type="submit">Se connecter</button>
+                <form method="post" class="form-container">
+                    <label>Email : <input type="email" name="email"></label>
+                    <label>Mot de passe : <input type="password" name="password"></label>
+                    <button type="submit" name="supprimer" class="btn-delete">Supprimer mon compte</button>
                 </form>
-                <p>Vous avez déjà un compte ? <a href="inscription.php">Inscrivez-vous</a></p>
+
                 <script>
                     function showError(message) {
                         const box = document.getElementById("form-error");
