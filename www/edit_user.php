@@ -23,6 +23,8 @@ if (!$user) {
     exit;
 }
 
+$error_message = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'];
     $prenom = $_POST['prenom'];
@@ -30,11 +32,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $code_postal = $_POST['code_postal'];
     $compte_admin = isset($_POST['compte_admin']) ? 1 : 0;
 
-    $stmt = $bdd->prepare("UPDATE utilisateurs SET nom = ?, prenom = ?, adresse = ?, code_postal = ?, compte_admin = ? WHERE adresse_mail = ?");
-    $stmt->execute([$nom, $prenom, $adresse, $code_postal, $compte_admin, $email]);
+    if (
+        empty($nom) || empty($prenom) || empty($adresse) ||
+        empty($code_postal) || empty($email)
+    ) {
+        $error_message = "Veuillez remplir tous les champs.";
+    }
 
-    header("Location: dashboard.php");
-    exit;
+    elseif (strlen($nom) > 50 || strlen($prenom) > 50 || strlen($adresse) > 200 || strlen($email) > 100) {
+        $error_message = "Un des champs dépasse la longueur maximale autorisée.";
+    }
+
+    elseif (ctype_digit($nom) || ctype_digit($prenom)) {
+        $error_message = "Le nom et le prénom ne doivent pas contenir de chiffres.";
+    }
+
+    elseif (!ctype_digit($code_postal) || strlen($code_postal) != 5) {
+        $error_message = "Code postal invalide.";
+    }
+
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error_message = "Adresse email invalide.";
+    }
+
+    if (empty($error_message)) {
+        $stmt = $bdd->prepare("UPDATE utilisateurs SET nom = ?, prenom = ?, adresse = ?, code_postal = ?, compte_admin = ? WHERE adresse_mail = ?");
+        $stmt->execute([$nom, $prenom, $adresse, $code_postal, $compte_admin, $email]);
+
+        header("Location: dashboard.php");
+        exit;
+    }
 }
 ?>
 
@@ -54,18 +81,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div id="controlPanel" class="controlPanel"></div>
             <main>
                 <h1>Modifier utilisateur</h1>
+
+                <div id="form-error">
+                    <span class="icon">⚠️</span>
+                    <span id="error-message"></span>
+                </div>
+
                 <form method="POST" class="form-container">
                     <label>Nom</label>
-                    <input type="text" name="nom" value="<?= htmlspecialchars($user['nom']) ?>" required>
+                    <input type="text" name="nom" value="<?= htmlspecialchars($user['nom']) ?>">
 
                     <label>Prénom</label>
-                    <input type="text" name="prenom" value="<?= htmlspecialchars($user['prenom']) ?>" required>
+                    <input type="text" name="prenom" value="<?= htmlspecialchars($user['prenom']) ?>">
 
                     <label>Adresse</label>
-                    <input type="text" name="adresse" value="<?= htmlspecialchars($user['adresse']) ?>" required>
+                    <input type="text" name="adresse" value="<?= htmlspecialchars($user['adresse']) ?>">
 
                     <label>Code Postal</label>
-                    <input type="text" name="code_postal" value="<?= htmlspecialchars($user['code_postal']) ?>" required>
+                    <input type="text" name="code_postal" value="<?= htmlspecialchars($user['code_postal']) ?>">
 
                     <div class="compte-admin-checkbox">
                         <label>
@@ -76,6 +109,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <button type="submit">Enregistrer</button>
                     <a href="dashboard.php" class="cp-btn">Annuler</a>
                 </form>
+
+                <script>
+                    function showError(message) {
+                        const box = document.getElementById("form-error");
+                        const msg = document.getElementById("error-message");
+
+                        msg.textContent = message;
+                        box.style.display = "flex";
+
+                        setTimeout(() => {
+                            box.style.display = "none";
+                        }, 4000);
+                    }
+                </script>
+                <?php if (!empty($error_message)) : ?>
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            showError("<?= $error_message ?>");
+                        });
+                    </script>
+                <?php endif; ?>
             </main>
         </div>
         <script>

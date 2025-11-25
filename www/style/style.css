@@ -481,12 +481,12 @@ body.dashboard-page main {
 
 .compte-admin-checkbox label {
     display: fixed;
-    align-items: center; /* Correct syntaxe */
+    align-items: center;
     gap: 0.5rem;
 }
 
 .compte-admin-checkbox span {
-    display: inline-block; /* Assure que le texte reste sur la même ligne */
+    display: inline-block;
 }
 
 
@@ -520,11 +520,11 @@ body.dashboard-page main {
     .search-section table {
         display: block;
         overflow-x: auto;
-        white-space: nowrap; /* Empêche le passage en colonne */
+        white-space: nowrap;
     }
 
     .search-section table th,
     .search-section table td {
-        min-width: 120px; /* Chaque colonne a une largeur minimale */
+        min-width: 120px;
     }
 }
