@@ -18,7 +18,7 @@ session_start();
         <div class="container">
             <div id="controlPanel" class="controlPanel"></div>
             <main>
-                <h1>Contact / Informations</h1>
+                <h1>Informations</h1>
                 <div class="info-section">
                     <h2>Créateur du projet</h2>
                     <p>Arthur LANGLOIS</p>

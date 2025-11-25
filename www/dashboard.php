@@ -10,8 +10,11 @@ if (!isset($_SESSION['user']) || !$_SESSION['user']['compte_admin']) {
 $stmt = $bdd->query("SELECT COUNT(*) AS total_equipements FROM equipements_sportifs");
 $stats_equipements = $stmt->fetch(PDO::FETCH_ASSOC)['total_equipements'];
 
-$stats_connexions = 123;
-$stats_vues_site = 456;
+$stmt = $bdd->query("SELECT COUNT(*) AS total_utilisateurs FROM utilisateurs");
+$stats_utilisateurs_connecte = $stmt->fetch(PDO::FETCH_ASSOC)['total_utilisateurs'];
+
+$stmt = $bdd->query("SELECT COUNT(*) AS total_vues FROM vues_site");
+$stats_vues_site = $stmt->fetch(PDO::FETCH_ASSOC)['total_vues'];
 
 $equipements_result = [];
 $users_result = [];
@@ -20,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['search_equipement'])
     $search_equip = '%' . $_POST['search_equipement'] . '%';
     $stmt = $bdd->prepare("SELECT * FROM equipements_sportifs WHERE nom LIKE ?");
     $stmt->execute([$search_equip]);
-    $equipements_result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $equipements_result = $stmt->fetchAll(PDO::FETCH_ASSOC);    
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['search_user'])) {
@@ -59,7 +62,7 @@ if (empty($users_result)) {
                     </div>
                     <div class="stat-box">
                         <h3>Connexions</h3>
-                        <p><?= $stats_connexions ?></p>
+                        <p><?= $stats_utilisateurs_connecte ?></p>
                     </div>
                     <div class="stat-box">
                         <h3>Vues du site</h3>

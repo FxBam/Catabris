@@ -2,6 +2,15 @@
 require_once "../bdd/connexion_bdd.php";
 session_start();
 
+$page = $_SERVER['REQUEST_URI'];  // récupère le chemin de la page, ex: /index.php
+$ip = $_SERVER['REMOTE_ADDR'];    // récupère l'IP du visiteur
+
+$stmt = $bdd->prepare("INSERT INTO vues_site (page, ip) VALUES (:page, :ip)");
+$stmt->execute([
+    ':page' => $page,
+    ':ip' => $ip
+]);
+
 $sql = "SELECT latitude, longitude, nom, proprietaire, type_equipement, accessibilite, adresse, commune, mail, telephone, site_web FROM equipements_sportifs";
 $stmt = $bdd->prepare($sql);
 $stmt->execute();
