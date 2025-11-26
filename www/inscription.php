@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $hashed = password_hash($password, PASSWORD_BCRYPT);
 
             $stmt = $bdd->prepare("INSERT INTO utilisateurs (nom, prenom, adresse, code_postal, adresse_mail, mot_de_passe)
-                                   VALUES (?, ?, ?, ?, ?, ?)");
+            VALUES (?, ?, ?, ?, ?, ?)");
 
             if ($stmt->execute([$nom, $prenom, $adresse, $code_postal, $email, $hashed])) {
                 header('Location: connexion.php');
