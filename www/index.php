@@ -48,8 +48,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         <div class="container">
             <div id="controlPanel" class="controlPanel"></div>
             <main>
-                <h1>Bienvenue sur Catabris</h1>
-                <h3>Utiliser la carte pour localiser l'equipement sportif de votre choix</h3>
                 <div class="mapouter">
                     <div class="osm_canvas">
                         <iframe id="osm_canvas" src="about:blank" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
@@ -57,13 +55,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             function resizeIframe() {
                                 const container = document.querySelector('.osm_canvas');
                                 const width = container.clientWidth;
-                                const height = 700;
+                                const height = container.clientHeight;
 
                                 const iframe = document.getElementById('osm_canvas');
                                 iframe.style.width = width + 'px';
+                                iframe.style.height = height + 'px';
 
                                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-
 
                                 iframeDoc.open();
                                 iframeDoc.write(`
@@ -142,11 +140,8 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 `);
                                 iframeDoc.close();
                             }
-                            
                             window.addEventListener('load', resizeIframe);
                             window.addEventListener('resize', resizeIframe);
-
-                            
                         </script>
                     </div>
                 </div> 
