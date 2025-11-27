@@ -1,28 +1,82 @@
+DROP TABLE IF EXISTS equipements_sportifs;
+
 CREATE TABLE equipements_sportifs (
-    id VARCHAR(50) PRIMARY KEY, --Id present dans le json de l'api
-    
-    uai VARCHAR(20),
-    nom VARCHAR(255),
-    type_equipement VARCHAR(100),
-    proprietaire VARCHAR(255),
-    siret VARCHAR(50),
-    
-    longueur DECIMAL(10,2),
-    largeur DECIMAL(10,2),
-    surface DECIMAL(10,2),
-    type_sol VARCHAR(100),
-    nature_equipement VARCHAR(100),
-    
-    adresse VARCHAR(255),
-    commune VARCHAR(150),
-    latitude DECIMAL(10,7),
-    longitude DECIMAL(10,7),
-    
-    mail VARCHAR(255),
-    telephone VARCHAR(50),
-    site_web VARCHAR(255),
-    accessibilite VARCHAR(255), --Données d'accessibilité PMR
-    observations TEXT, --Données suplémentaires
-    
+	id VARCHAR(50),
+	installation_id VARCHAR(4), --  souvent vide
+ 	creation_dt DATE, --  2025-03-31
+	maj_date DATE, --  2025-03-31
+ 	maj_lien VARCHAR(175),
+ 	numero VARCHAR(14), --  E024I212310064
+ 	nom VARCHAR(255), --  Courts de tennis couverts 5
+ 	type_equipement VARCHAR(100), --  Court de tennis
+ 	coordonnees VARCHAR(40), --  47.31406, 5.08352
+ 	proprietaire_principal_nom VARCHAR(250), --  SYNDICAT INTERDEPARTEMENTAL POUR LA GESTION DES PARCS DE SPORTS DE BOBIGNY ET LA COURNEUVE (SIGPS)
+ 	proprietaire_principal_type VARCHAR(100), --  Région
+ 	autres_proprietaires VARCHAR(255),
+ 	proprietaire_secondaire_type VARCHAR(100), --  Etat
+ 	gestionnaire_type VARCHAR(100), --  Etablissement Public
+ 	co_gestionnaire_type VARCHAR(100),
+ 	gestion_dsp VARCHAR(3), --  Non ou Oui
+ 	arrete_ouverture VARCHAR(3), --  Oui ou Non
+ 	erp_type VARCHAR(25),  --  RPE,CTS,X,R
+ 	erp_cat INT, --  1,2,3,4 ou 5
+ 	is_date_homologation_known TINYINT(1), --  1 ou 0
+ 	homologation_date DATE, --  14/06/2006
+ 	homologation_periode VARCHAR(30), -- 1975-1984
+ 	is_date_mise_en_service_known TINYINT(1), -- 1 ou 0
+ 	mise_en_service_date VARCHAR(4), -- 2004
+ 	mise_en_service_periode VARCHAR(100), --  à partir de 2004
+ 	is_date_derniers_travaux_known TINYINT(1), -- 1 ou 0
+ 	derniers_travaux_date VARCHAR(4), -- 2004
+ 	derniers_travaux_periode VARCHAR(100), -- ?
+ 	derniers_travaux_type VARCHAR(255), -- ?
+ 	chauffage_energie VARCHAR(50), -- Electricité,etc
+ 	nature_equipement VARCHAR(100), --  Decouvert
+ 	aire_nature_sol VARCHAR(50), -- Beton
+ 	aire_longueur DECIMAL(10,1), -- 12.0
+ 	aire_largeur DECIMAL(10,1), -- 6
+ 	aire_hauteur DECIMAL(10,1), -- 6
+ 	aire_surface DECIMAL(10,1), -- 72
+ 	aire_eclairage VARCHAR(3), -- Oui ou Non
+ 	aire_couloirs_nb INT,
+ 	places_tibune_nb DECIMAL(10,1), -- 0.0
+ 	vestiaires_sportifs_nb DECIMAL(5,1), -- 2.0
+ 	vestiaires_arbitres_nb DECIMAL(3,1), -- 0.0
+ 	douches VARCHAR(3), -- Oui ou Non
+ 	sanitaires VARCHAR(3), -- Oui ou Non
+ 	autres_locaux TEXT, -- Réception / Accueil, Bureau(x) Club(s), Buvette, Club(s) house, Local de rangement, Salle(s) de réunion/cours
+ 	amenagements_confort TEXT,
+ 	acces_handi_mobilite VARCHAR(100), -- Aire de jeu
+ 	acces_handi_sensoriel VARCHAR(100), -- Aire de jeu
+ 	is_pdesi_pdipr VARCHAR(3),
+ 	bassin_longueur DECIMAL(10,2), -- 50
+ 	bassin_largeur DECIMAL(10,2), -- 21
+ 	bassin_surface DECIMAL(10,2), -- 1050
+ 	bassin_profondeur_min DECIMAL(10,2), -- 1.2
+ 	bassin_profondeur_max DECIMAL(10,2), -- 2.1
+ 	piste_longueur DECIMAL(10,2),
+ 	sae_hauteur DECIMAL(10,2),
+ 	sae_surface DECIMAL(10,2),
+ 	sae_couloirs_nb INT,
+ 	pas_de_tir_type VARCHAR(100),
+ 	website VARCHAR(255), -- https://parcs-sports-75-93.fr/
+ 	utilisateurs VARCHAR(255), -- Clubs sportifs, comités, ligues, fédérations
+ 	acces_libre VARCHAR(3), -- Oui ou Non
+ 	ouverture_saisonniere VARCHAR(3), -- Oui ou Non
+ 	activites VARCHAR(500), -- Tennis, Backet-Ball, ...
+ 	observations TEXT,
+ 	coordonnees_y DECIMAL(10,6), -- 45.7535 (latitude)
+ 	coordonnees_x DECIMAL(10,6), --  -0.647111 (longitude)
+ 	activites_code VARCHAR(100), -- 7901, 8101, 8103
+ 	activites_json JSON, -- avec autre api
+ 	completion_taux INT, -- 75 (%)
+ 	equip_nb INT, -- 23
+ 	equipement_id VARCHAR(7), -- 9e2651b
+ 	etat VARCHAR(30), -- Validé
+ 	type_famille VARCHAR(50), -- Court de tennis
+ 	type_code VARCHAR(4), -- 1402
+ 	rnb_id VARCHAR(50), -- NM2R8T1HJ3BF
+ 	commune VARCHAR(255), --  Saintes
+
     imported_at DATETIME DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

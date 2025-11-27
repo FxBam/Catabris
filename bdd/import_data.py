@@ -1,12 +1,8 @@
-from dotenv import load_dotenv
 import os
 import json
 import mysql.connector
 import sys
 import re
-
-dotenv_path = os.path.join(os.path.dirname(__file__), '..', '.env')
-load_dotenv()
 
 # --- CONFIGURATION ---
 DB_CONFIG = {
@@ -126,24 +122,82 @@ def build_insert_request(data, table_name="equipements_sportifs"):
     data['commune'] = data.pop('commune')
 
     mapping_colonnes = {
-    "equipement_id": "id",
-    "numero": "uai",
+    "installation_numero": "id",
+    "installation_id": "installation_id",
+    "creation_dt": "creation_dt",
+    "maj_date": "maj_date",
+    "maj_lien": "maj_lien",
+    "numero": "numero",
     "nom": "nom",
     "type": "type_equipement",
-    "proprietaire_principal_nom": "proprietaire",
-    "siret": "siret",
-    "aire_longueur": "longueur",
-    "aire_largeur": "largeur",
-    "aire_surface": "surface",
-    "aire_nature_sol": "type_sol",
+    "coordonnees": "coordonnees",
+    "proprietaire_principal_nom": "proprietaire_principal_nom",
+    "proprietaire_principal_type": "proprietaire_principal_type",
+    "autres_proprietaires": "autres_proprietaires",
+    "proprietaire_secondaire_type": "proprietaire_secondaire_type",
+    "gestionnaire_type": "gestionnaire_type",
+    "co_gestionnaire_type": "co_gestionnaire_type",
+    "gestion_dsp": "gestion_dsp",
+    "arrete_ouverture": "arrete_ouverture",
+    "erp_type": "erp_type",
+    "erp_cat": "erp_cat",
+    "is_date_homologation_known": "is_date_homologation_known",
+    "homologation_date": "homologation_date",
+    "homologation_periode": "homologation_periode",
+    "is_date_mise_en_service_known": "is_date_mise_en_service_known",
+    "mise_en_service_date": "mise_en_service_date",
+    "mise_en_service_periode": "mise_en_service_periode",
+    "is_date_derniers_travaux_known": "is_date_derniers_travaux_known",
+    "derniers_travaux_date": "derniers_travaux_date",
+    "derniers_travaux_periode": "derniers_travaux_periode",
+    "derniers_travaux_type": "derniers_travaux_type",
+    "chauffage_energie": "chauffage_energie",
     "nature": "nature_equipement",
-    "adresse": "adresse",
-    "commune": "commune",
-    "coordonnees_y": "latitude",
-    "coordonnees_x": "longitude",
-    "website": "site_web",
-    "acces_handi_mobilite": "accessibilite",
-    "observations": "observations"
+    "aire_nature_sol": "aire_nature_sol",
+    "aire_longueur": "aire_longueur",
+    "aire_largeur": "aire_largeur",
+    "aire_hauteur": "aire_hauteur",
+    "aire_surface": "aire_surface",
+    "aire_eclairage": "aire_eclairage",
+    "aire_couloirs_nb": "aire_couloirs_nb",
+    "places_tibune_nb": "places_tibune_nb",
+    "vestiaires_sportifs_nb": "vestiaires_sportifs_nb",
+    "vestiaires_arbitres_nb": "vestiaires_arbitres_nb",
+    "douches": "douches",
+    "sanitaires": "sanitaires",
+    "autres_locaux": "autres_locaux",
+    "amenagements_confort": "amenagements_confort",
+    "acces_handi_mobilite": "acces_handi_mobilite",
+    "acces_handi_sensoriel": "acces_handi_sensoriel",
+    "is_pdesi_pdipr": "is_pdesi_pdipr",
+    "bassin_longueur": "bassin_longueur",
+    "bassin_largeur": "bassin_largeur",
+    "bassin_surface": "bassin_surface",
+    "bassin_profondeur_min": "bassin_profondeur_min",
+    "bassin_profondeur_max": "bassin_profondeur_max",
+    "piste_longueur": "piste_longueur",
+    "sae_hauteur": "sae_hauteur",
+    "sae_surface": "sae_surface",
+    "sae_couloirs_nb": "sae_couloirs_nb",
+    "pas_de_tir_type": "pas_de_tir_type",
+    "website": "website",
+    "utilisateurs": "utilisateurs",
+    "acces_libre": "acces_libre",
+    "ouverture_saisonniere": "ouverture_saisonniere",
+    "activites": "activites",
+    "observations": "observations",
+    "coordonnees_y": "coordonnees_y",
+    "coordonnees_x": "coordonnees_x",
+    "activites_code": "activites_code",
+    "activites_json": "activites_json",
+    "completion_taux": "completion_taux",
+    "equip_nb": "equip_nb",
+    "equipement_id": "equipement_id",
+    "etat": "etat",
+    "type_famille": "type_famille",
+    "type_code": "type_code",
+    "rnb_id": "rnb_id",
+    "commune": "commune"
     }
 
     # Filtrer et renommer directement ici
