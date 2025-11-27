@@ -11,9 +11,20 @@ $stmt->execute([
     ':ip' => $ip
 ]);
 
-$sql = "SELECT latitude, longitude, nom, proprietaire, type_equipement, accessibilite, adresse, commune, mail, telephone, site_web 
-        FROM equipements_sportifs
-        LIMIT 1000";
+$sql = $sql = "SELECT 
+            coordonnees_y AS latitude,
+            coordonnees_x AS longitude,
+            nom,
+            proprietaire_principal_nom AS proprietaire,
+            type_equipement,
+            acces_libre AS accessibilite,
+            commune,
+            website AS site_web
+        FROM equipements_sportifs 
+        WHERE coordonnees_y IS NOT NULL 
+          AND coordonnees_x IS NOT NULL
+        ORDER BY nom
+        LIMIT 500";
 $stmt = $bdd->prepare($sql);
 $stmt->execute();
 
@@ -26,10 +37,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         'proprietaire'    => (string) $row['proprietaire'],
         'type_equipement' => (string) $row['type_equipement'],
         'accessibilite'   => (string) $row['accessibilite'],
-        'adresse'         => (string) $row['adresse'],
         'commune'         => (string) $row['commune'],
-        'mail'            => (string) $row['mail'],
-        'telephone'       => (string) $row['telephone'],
         'site_web'        => (string) $row['site_web']
     ];
 }
@@ -124,10 +132,7 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                                         proprietaire : \${lieu.proprietaire}<br>
                                                         type_equipement : \${lieu.type_equipement}<br>
                                                         accessibilite : \${lieu.accessibilite}<br>
-                                                        adresse : \${lieu.adresse}<br>
                                                         commune : \${lieu.commune}<br>
-                                                        mail : \${lieu.mail}<br>
-                                                        telephone : \${lieu.telephone}<br>
                                                         site_web : \${lieu.site_web}
                                                     </p>
                                                 \`;
