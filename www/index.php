@@ -11,7 +11,9 @@ $stmt->execute([
     ':ip' => $ip
 ]);
 
-$sql = "SELECT latitude, longitude, nom, proprietaire, type_equipement, accessibilite, adresse, commune, mail, telephone, site_web FROM equipements_sportifs";
+$sql = "SELECT latitude, longitude, nom, proprietaire, type_equipement, accessibilite, adresse, commune, mail, telephone, site_web 
+        FROM equipements_sportifs
+        LIMIT 1000";
 $stmt = $bdd->prepare($sql);
 $stmt->execute();
 
