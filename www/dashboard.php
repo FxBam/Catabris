@@ -85,8 +85,6 @@ if (empty($users_result)) {
                                         <th>ID</th>
                                         <th>Nom</th>
                                         <th>Type</th>
-                                        <th>Propriétaire</th>
-                                        <th>Adresse</th>
                                         <th>Commune</th>
                                         <th>Modifier</th>
                                     </tr>
@@ -97,8 +95,6 @@ if (empty($users_result)) {
                                         <td><?= htmlspecialchars($equip['id']) ?></td>
                                         <td><?= htmlspecialchars($equip['nom']) ?></td>
                                         <td><?= htmlspecialchars($equip['type_equipement']) ?></td>
-                                        <td><?= htmlspecialchars($equip['proprietaire']) ?></td>
-                                        <td><?= htmlspecialchars($equip['adresse']) ?></td>
                                         <td><?= htmlspecialchars($equip['commune']) ?></td>
                                         <td><a href="edit_equipement.php?id=<?= urlencode($equip['id']) ?>">Modifier</a></td>
                                     </tr>

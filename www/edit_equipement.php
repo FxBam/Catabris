@@ -28,21 +28,19 @@ $error_message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'];
     $type_equipement = $_POST['type_equipement'];
-    $proprietaire = $_POST['proprietaire'];
-    $adresse = $_POST['adresse'];
     $commune = $_POST['commune'];
 
-    if (empty($nom) || empty($type_equipement) || empty($proprietaire) || empty($adresse) || empty($commune)) {
+    if (empty($nom) || empty($type_equipement) || empty($commune)) {
         $error_message="Veuillez saisir toutes les données.";
     }
 
-    if (strlen($nom) > 100 || strlen($type_equipement) > 100 || strlen($proprietaire) > 100 || strlen($adresse) > 200 || strlen($commune) > 100) {
+    if (strlen($nom) > 100 || strlen($type_equipement) > 100 || strlen($commune) > 100) {
         $error_message = "Un des champs dépasse la longueur maximale autorisée.";
     }
 
     if (empty($error_message)) {
-        $stmt = $bdd->prepare("UPDATE equipements_sportifs SET nom = ?, type_equipement = ?, proprietaire = ?, adresse = ?, commune = ? WHERE id = ?");
-        $stmt->execute([$nom, $type_equipement, $proprietaire, $adresse, $commune, $id]);
+        $stmt = $bdd->prepare("UPDATE equipements_sportifs SET nom = ?, type_equipement = ?, commune = ? WHERE id = ?");
+        $stmt->execute([$nom, $type_equipement, $commune, $id]);
 
         header("Location: dashboard.php");
         exit;
@@ -78,12 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <label>Type d'équipement</label>
                     <input type="text" name="type_equipement" value="<?= htmlspecialchars($equip['type_equipement']) ?>">
-
-                    <label>Propriétaire</label>
-                    <input type="text" name="proprietaire" value="<?= htmlspecialchars($equip['proprietaire']) ?>">
-
-                    <label>Adresse</label>
-                    <input type="text" name="adresse" value="<?= htmlspecialchars($equip['adresse']) ?>">
 
                     <label>Commune</label>
                     <input type="text" name="commune" value="<?= htmlspecialchars($equip['commune']) ?>">
