@@ -16,10 +16,13 @@ $sql = $sql = "SELECT
             coordonnees_x AS longitude,
             nom,
             proprietaire_principal_nom AS proprietaire,
+            proprietaire_principal_type AS proprietaire_principal_type,
             type_equipement,
             acces_libre AS accessibilite,
             commune,
-            website AS site_web
+            website AS site_web,
+            nb_remplie AS nb_remplie,
+            nb_capacite AS nb_capacite
         FROM equipements_sportifs 
         WHERE coordonnees_y IS NOT NULL 
           AND coordonnees_x IS NOT NULL
@@ -35,10 +38,13 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         'longitude'       => (float) $row['longitude'],
         'nom'             => (string) $row['nom'],
         'proprietaire'    => (string) $row['proprietaire'],
+        'proprietaire_principal_type'    => (string) $row['proprietaire_principal_type'],
         'type_equipement' => (string) $row['type_equipement'],
         'accessibilite'   => (string) $row['accessibilite'],
         'commune'         => (string) $row['commune'],
-        'site_web'        => (string) $row['site_web']
+        'site_web'        => (string) $row['site_web'],
+        'nb_remplie'      => (int) $row['nb_remplie'],
+        'nb_capacite'     => (int) $row['nb_capacite']
     ];
 }
 ?>
@@ -135,6 +141,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                                 if (lieu.proprietaire && lieu.proprietaire.trim() !== '') {
                                                     content += 'Proprietaire : ' + lieu.proprietaire + '<br>';
                                                 }
+                                                if (lieu.proprietaire_principal_type && lieu.proprietaire_principal_type.trim() !== '') {
+                                                    content += 'Type de proprietaire : ' + lieu.proprietaire_principal_type + '<br>';
+                                                }
                                                 if (lieu.type_equipement && lieu.type_equipement.trim() !== '') {
                                                     content += 'Type d équipement : ' + lieu.type_equipement + '<br>';
                                                 }
@@ -148,8 +157,9 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                                     if ('http' !== lieu.site_web.substring(0, 4) && 'https' !== lieu.site_web.substring(0, 5)) {
                                                         lieu.site_web = 'http://' + lieu.site_web;
                                                     }
-                                                    content += 'Site web : ' + '<a href="' + lieu.site_web + '" target="_blank">' + 'Site web du lieu</a>';
+                                                    content += 'Site web : ' + '<a href="' + lieu.site_web + '" target="_blank">' + 'Site web du lieu</a>' + '<br>';
                                                 }
+                                                content += 'Capacité : ' + lieu.nb_remplie + ' / ' + lieu.nb_capacite + '<br>';
                                                 
                                                 content += '</p>';
                                                 document.getElementById('panel-content').innerHTML = content;
