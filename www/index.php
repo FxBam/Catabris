@@ -126,16 +126,32 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                         lieux.forEach(function(lieu) {
                                             var marker = L.marker([lieu.latitude, lieu.longitude]).addTo(map);
                                             marker.on('click', function() {
-                                                document.getElementById('panel-content').innerHTML = \`
-                                                    <h2>\${lieu.nom}</h2>
-                                                    <p>
-                                                        proprietaire : \${lieu.proprietaire}<br>
-                                                        type_equipement : \${lieu.type_equipement}<br>
-                                                        accessibilite : \${lieu.accessibilite}<br>
-                                                        commune : \${lieu.commune}<br>
-                                                        site_web : \${lieu.site_web}
-                                                    </p>
-                                                \`;
+                                                // Centrer la carte sur le marqueur sélectionné
+                                                map.setView([lieu.latitude, lieu.longitude], 15);
+                                                
+                                                var content = '<h2>' + lieu.nom + '</h2><p>';
+                                                
+                                                if (lieu.proprietaire && lieu.proprietaire.trim() !== '') {
+                                                    content += 'Proprietaire : ' + lieu.proprietaire + '<br>';
+                                                }
+                                                if (lieu.type_equipement && lieu.type_equipement.trim() !== '') {
+                                                    content += 'Type d équipement : ' + lieu.type_equipement + '<br>';
+                                                }
+                                                if (lieu.accessibilite && lieu.accessibilite.trim() !== '') {
+                                                    content += 'Accessibilite : ' + lieu.accessibilite + '<br>';
+                                                }
+                                                if (lieu.commune && lieu.commune.trim() !== '') {
+                                                    content += 'Commune : ' + lieu.commune + '<br>';
+                                                }
+                                                if (lieu.site_web && lieu.site_web.trim() !== '') {
+                                                    if ('http' !== lieu.site_web.substring(0, 4) && 'https' !== lieu.site_web.substring(0, 5)) {
+                                                        lieu.site_web = 'http://' + lieu.site_web;
+                                                    }
+                                                    content += 'Site web : ' + '<a href="' + lieu.site_web + '" target="_blank">' + 'Site web du lieu</a>';
+                                                }
+                                                
+                                                content += '</p>';
+                                                document.getElementById('panel-content').innerHTML = content;
                                                 document.getElementById('bottom-panel').classList.add('active');
                                             });
                                         });
