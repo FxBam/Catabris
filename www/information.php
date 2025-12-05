@@ -21,12 +21,6 @@ session_start();
             <main>
                 <h1>Informations</h1>
                 <div class="info-section">
-                    <h2>Créateur du projet</h2>
-                    <p>Arthur LANGLOIS</p>
-
-                    <h2>Commanditaire du projet</h2>
-                    <p>Mme JORT</p>
-                    <p>Mme SULMONT</p>
 
                     <h2>But du projet</h2>
                     <p>L’objectif de cette application est de permettre d'avoir accèes à toutes les informations concernant les équipements sportifs existants en France, ainsi que localiser le point de sureté le plus proche en cas de catastrophe naturelle.</p>

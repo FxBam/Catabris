@@ -88,6 +88,7 @@ if (empty($users_result)) {
                                         <th>Type</th>
                                         <th>Commune</th>
                                         <th>Modifier</th>
+                                        <th>Supprimer</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -98,6 +99,7 @@ if (empty($users_result)) {
                                         <td><?= htmlspecialchars($equip['type_equipement']) ?></td>
                                         <td><?= htmlspecialchars($equip['commune']) ?></td>
                                         <td><a href="edit_equipement.php?id=<?= urlencode($equip['id']) ?>">Modifier</a></td>
+                                        <td><a<?= urlencode($equip['id']) ?>>Supprimer</a></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
