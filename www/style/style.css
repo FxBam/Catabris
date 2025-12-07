@@ -712,6 +712,19 @@ body.dashboard-page main {
     margin-right: 5px;
 }
 
+.panel-body .badge-info {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 2px 2px !important;
+    line-height: 1.2 !important;
+    padding: 3px 8px !important;
+}
+
+.panel-body .badge-info i {
+    margin-right: 3px !important;
+    vertical-align: middle !important;
+}
+
 /* Jauge de capacité (demi-camembert) */
 .capacity-gauge {
     display: flex;

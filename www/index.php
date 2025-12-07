@@ -88,7 +88,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             async function loadEquipements(query = '') {
                 const bounds = map.getBounds();
                 const params = new URLSearchParams({
-                    limit: 10,
+                    limit: 4000,
                     minLat: bounds.getSouth(),
                     maxLat: bounds.getNorth(),
                     minLon: bounds.getWest(),
@@ -118,30 +118,50 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 showLoading(true);
                 
                 try {
-                    const response = await fetch(`${API_BASE}/equipements.php?${params}`);
+                    const response = await fetch(`${API_BASE}/markers.php?${params}`);
                     const data = await response.json();
                     
                     if (data.success) {
                         markers.clearLayers();
                         
-                        data.data.forEach(equip => {
-                            if (equip.latitude && equip.longitude) {
-                                const marker = L.marker([equip.latitude, equip.longitude]);
-                                marker.equipementData = equip;
+                        data.markers.forEach(marker => {
+                            if (marker.latitude && marker.longitude) {
+                                const leafletMarker = L.marker([marker.latitude, marker.longitude]);
+                                leafletMarker.equipementId = marker.id;
                                 
-                                marker.on('click', function() {
-                                    showEquipementPanel(this.equipementData);
-                                    map.setView([this.equipementData.latitude, this.equipementData.longitude], 15);
+                                leafletMarker.on('click', async function() {
+                                    await loadEquipementDetails(this.equipementId);
                                 });
                                 
-                                markers.addLayer(marker);
+                                markers.addLayer(leafletMarker);
                             }
                         });
                         
-                        console.log(`${data.count} équipements chargés sur ${data.total_count} total`);
+                        console.log(`${data.markers.length} marqueurs chargés`);
                     }
                 } catch (error) {
-                    console.error('Erreur chargement équipements:', error);
+                    console.error('Erreur chargement marqueurs:', error);
+                } finally {
+                    showLoading(false);
+                }
+            }
+            
+            async function loadEquipementDetails(equipId) {
+                showLoading(true);
+                
+                try {
+                    const response = await fetch(`${API_BASE}/equipements.php?id=${equipId}`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.data && data.data.length > 0) {
+                        const equip = data.data[0];
+                        showEquipementPanel(equip);
+                        map.setView([equip.latitude, equip.longitude], 15);
+                    } else {
+                        console.error('Équipement non trouvé');
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement détails:', error);
                 } finally {
                     showLoading(false);
                 }
@@ -212,11 +232,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
                 
                 if (equip.commune) {
-                    html += `<div class="info-row"><i class="fas fa-map-marker-alt"></i><span>${equip.commune}${equip.code_postal ? ' (' + equip.code_postal + ')' : ''}</span></div>`;
-                }
-                
-                if (equip.adresse) {
-                    html += `<div class="info-row"><i class="fas fa-road"></i><span>${equip.adresse}</span></div>`;
+                    html += `<div class="info-row"><i class="fas fa-map-marker-alt"></i><span>${equip.commune}</span></div>`;
                 }
                 
                 if (equip.proprietaire_principal_type) {

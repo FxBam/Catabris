@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS equipements_sportifs;
 
 CREATE TABLE equipements_sportifs (
-	id VARCHAR(50),
+	id VARCHAR(50) PRIMARY KEY,
 	installation_id VARCHAR(4), --  souvent vide
  	creation_dt DATE, --  2025-03-31
 	maj_date DATE, --  2025-03-31
@@ -77,21 +77,8 @@ CREATE TABLE equipements_sportifs (
  	type_code VARCHAR(4), -- 1402
  	rnb_id VARCHAR(50), -- NM2R8T1HJ3BF
  	commune VARCHAR(255), --  Saintes
+	nb_capacite INT(5) DEFAULT FLOOR(100 + RAND(CRC32(UUID())) * (5000 - 100 + 1)),
+	nb_remplie INT(5) DEFAULT 0,
 
     imported_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-ALTER TABLE equipements_sportifs
-ADD COLUMN nb_capacite INT(5)
-    DEFAULT FLOOR(100 + RAND(CRC32(UUID())) * (5000 - 100 + 1));
-
-UPDATE equipements_sportifs
-SET nb_capacite = FLOOR(100 + RAND(CRC32(UUID())) * (5000 - 100 + 1))
-WHERE nb_capacite IS NULL;
-
-ALTER TABLE equipements_sportifs
-DROP COLUMN nb_capacite;
-
-ALTER TABLE equipements_sportifs
-ADD COLUMN nb_remplie INT(5)
-    DEFAULT 0;
