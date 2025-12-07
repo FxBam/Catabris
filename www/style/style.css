@@ -443,15 +443,40 @@ body.dashboard-page main {
 
 .search-section a {
     display: inline-block;
-    padding: 0.3rem 0.6rem;
+    padding: 0.5rem 1rem;
     background-color: #333;
     color: white;
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 0.9rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
 }
 
 .search-section a:hover {
+    background-color: #555;
+}
+
+/* Appliquer le même style aux boutons dans les tableaux */
+.search-section table form {
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+}
+
+.search-section table button.delete-btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+}
+
+.search-section table button.delete-btn:hover {
     background-color: #555;
 }
 
@@ -464,7 +489,6 @@ body.dashboard-page main {
 .compte-admin-checkbox span {
     display: inline-block;
 }
-
 
 /* Responsive*/
 @media (max-width: 768px) {

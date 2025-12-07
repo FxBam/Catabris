@@ -82,25 +82,50 @@ if (empty($users_result)) {
                         <?php if (!empty($equipements_result)): ?>
                             <table>
                                 <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th>Nom</th>
-                                        <th>Type</th>
-                                        <th>Commune</th>
-                                        <th>Modifier</th>
-                                        <th>Supprimer</th>
-                                    </tr>
-                                </thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nom</th>
+                                            <th>Type</th>
+                                            <th>Commune</th>
+                                            <th>Propriétaire</th>
+                                            <th>Sanitaires</th>
+                                            <th>Accès PMR</th>
+                                            <th>Création</th>
+                                            <th>MàJ</th> 
+                                            <th>Modifier</th>
+                                            <th>Supprimer</th>
+                                        </tr>
+                                    </thead>
                                 <tbody>
                                     <?php foreach($equipements_result as $equip): ?>
-                                    <tr>
-                                        <td><?= htmlspecialchars($equip['id']) ?></td>
-                                        <td><?= htmlspecialchars($equip['nom']) ?></td>
-                                        <td><?= htmlspecialchars($equip['type_equipement']) ?></td>
-                                        <td><?= htmlspecialchars($equip['commune']) ?></td>
-                                        <td><a href="edit_equipement.php?id=<?= urlencode($equip['id']) ?>">Modifier</a></td>
-                                        <td><a<?= urlencode($equip['id']) ?>>Supprimer</a></td>
-                                    </tr>
+                                        <tr>
+                                            <td><?= htmlspecialchars($equip['id']) ?></td>
+                                                <td><?= htmlspecialchars($equip['nom']) ?></td>
+                                                <td><?= htmlspecialchars($equip['type_equipement']) ?></td>
+                                                <td><?= htmlspecialchars($equip['commune']) ?></td>
+                                                <td><?= htmlspecialchars($equip['proprietaire_principal_type'] ?? '') ?></td>
+                                                <td><?= !empty($equip['sanitaires']) ? 'oui' : 'non' ?></td>
+                                                <td><?= !empty($equip['acces_handi_mobilite']) ? 'oui' : 'non' ?></td>
+                                                <td>
+                                                    <?php if (!empty($equip['creation_dt'])): ?>
+                                                        <?= htmlspecialchars(date('d/m/Y H:i', strtotime($equip['creation_dt']))) ?>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <?php if (!empty($equip['maj_date'])): ?>
+                                                        <?= htmlspecialchars(date('d/m/Y H:i', strtotime($equip['maj_date']))) ?>
+                                                    <?php endif; ?>
+                                                </td>
+                                                
+                                                <td><a href="edit_equipement.php?id=<?= urlencode($equip['id']) ?>">Modifier</a></td>
+                                                <td>
+                                                    <form method="POST" action="delete.php" onsubmit="return confirm('Confirmer la suppression de cet équipement ?');">
+                                                        <input type="hidden" name="type" value="equip">
+                                                        <input type="hidden" name="id" value="<?= htmlspecialchars($equip['id']) ?>">
+                                                        <button type="submit" class="delete-btn">Supprimer</button>
+                                                    </form>
+                                                </td>
+                                        </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
@@ -123,6 +148,7 @@ if (empty($users_result)) {
                                     <th>Code Postal</th>
                                     <th>Admin</th>
                                     <th>Modifier</th>
+                                    <th>Supprimer</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -135,6 +161,13 @@ if (empty($users_result)) {
                                     <td><?= htmlspecialchars($user['code_postal']) ?></td>
                                     <td><?= htmlspecialchars($user['compte_admin'] ? 'oui' : 'non') ?></td>
                                     <td><a href="edit_user.php?email=<?= urlencode($user['adresse_mail']) ?>">Modifier</a></td>
+                                    <td>
+                                        <form method="POST" action="delete.php" onsubmit="return confirm('Confirmer la suppression de cet utilisateur ?');">
+                                            <input type="hidden" name="type" value="user">
+                                            <input type="hidden" name="email" value="<?= htmlspecialchars($user['adresse_mail']) ?>">
+                                            <button type="submit" class="delete-btn">Supprimer</button>
+                                        </form>
+                                    </td>
                                 </tr>
                                 <?php endforeach; ?>
                             </tbody>
