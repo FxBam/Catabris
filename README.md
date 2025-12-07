@@ -81,6 +81,14 @@ Pour les collectivités & services de secours :
 Certaines données peuvent être enrichies via :  
 👉 [API Data ES - Gouvernement](https://api.gouv.fr/documentation/api-data-es)
 
+Pour la prise en main de l'API intégrée à ce projet : consultez le dossier `api/` et son fichier `api/README.md` qui décrit les endpoints disponibles. En local (XAMPP), appelez les endpoints via l'URL de votre instance, par exemple :
+
+- `http://"Nom du site"/Catabris/api/equipements.php?page=1&limit=20` — lister des équipements
+- `http://"Nom du site"/Catabris/api/equipements.php?id=ID` — récupérer les détails d'un équipement
+- `http://"Nom du site"/Catabris/api/suggestions.php?q=piscine&limit=5` — obtenir des suggestions
+
+Commencez par ouvrir `api/README.md` ou tester le premier exemple ci‑dessus pour vérifier le fonctionnement.
+
 ---
 
 ## ⭐ N’hésitez pas à mettre une étoile au dépôt si Catabris vous est utile !

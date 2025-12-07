@@ -67,6 +67,8 @@ session_start();
                     <h2>API suggérée</h2>
                     <p>Vous pouvez utiliser les données via l’API suivante :</p>
                     <p><a href="https://api.gouv.fr/documentation/api-data-es" target="_blank">https://api.gouv.fr/documentation/api-data-es</a></p>
+
+                    <p>API utilisée : /Catabris/api — documentation disponible : <a href="api_information.php">Information api</a></p>
                 </div>
             </main>
         </div>
