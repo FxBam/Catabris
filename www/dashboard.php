@@ -18,12 +18,33 @@ $stats_vues_site = $stmt->fetch(PDO::FETCH_ASSOC)['total_vues'];
 
 $equipements_result = [];
 $users_result = [];
+$equipements_pagination = [
+    'page' => 1,
+    'total_pages' => 0,
+    'total_count' => 0
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['search_equipement'])) {
+    $page = max(1, intval($_POST['equip_page'] ?? 1));
+    $limit = 10;
     $search_equip = '%' . $_POST['search_equipement'] . '%';
-    $stmt = $bdd->prepare("SELECT * FROM equipements_sportifs WHERE nom LIKE ? or commune LIKE ?");
+    
+    // Compter le total
+    $countStmt = $bdd->prepare("SELECT COUNT(*) as total FROM equipements_sportifs WHERE nom LIKE ? or commune LIKE ?");
+    $countStmt->execute([$search_equip, $search_equip]);
+    $total = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+    
+    $offset = ($page - 1) * $limit;
+    $stmt = $bdd->prepare("SELECT * FROM equipements_sportifs WHERE nom LIKE ? or commune LIKE ? LIMIT " . intval($limit) . " OFFSET " . intval($offset));
     $stmt->execute([$search_equip, $search_equip]);
-    $equipements_result = $stmt->fetchAll(PDO::FETCH_ASSOC);    
+    $equipements_result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+    $equipements_pagination = [
+        'page' => $page,
+        'total_pages' => ceil($total / $limit),
+        'total_count' => $total,
+        'limit' => $limit
+    ];
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['search_user'])) {
@@ -75,11 +96,18 @@ if (empty($users_result)) {
 
                     <div class="search-section">
                         <h2>Recherche d'équipements</h2>
-                        <form method="POST">
-                            <input type="text" name="search_equipement" placeholder="Nom de l'équipement">
+                        <form method="POST" id="search-equipement-form">
+                            <input type="text" name="search_equipement" placeholder="Nom de l'équipement" value="<?= htmlspecialchars($_POST['search_equipement'] ?? '') ?>">
+                            <input type="hidden" name="equip_page" id="equip_page" value="<?= $equipements_pagination['page'] ?>">
                             <button type="submit">Rechercher</button>
                         </form>
                         <?php if (!empty($equipements_result)): ?>
+                            <p>
+                                Affichage de <?= count($equipements_result) ?> résultat(s) sur <?= $equipements_pagination['total_count'] ?> équipement(s)
+                                <?php if ($equipements_pagination['total_pages'] > 1): ?>
+                                    - Page <?= $equipements_pagination['page'] ?> sur <?= $equipements_pagination['total_pages'] ?>
+                                <?php endif; ?>
+                            </p>
                             <table>
                                 <thead>
                                         <tr>
@@ -129,6 +157,33 @@ if (empty($users_result)) {
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
+                            
+                            <?php if ($equipements_pagination['total_pages'] > 1): ?>
+                                <div class="pagination">
+                                    <?php if ($equipements_pagination['page'] > 1): ?>
+                                        <button type="button" class="pagination-btn" onclick="changePage(<?= $equipements_pagination['page'] - 1 ?>)">
+                                            &laquo; Précédent
+                                        </button>
+                                    <?php endif; ?>
+                                    
+                                    <?php
+                                    $start = max(1, $equipements_pagination['page'] - 2);
+                                    $end = min($equipements_pagination['total_pages'], $equipements_pagination['page'] + 2);
+                                    
+                                    for ($i = $start; $i <= $end; $i++):
+                                    ?>
+                                        <button type="button" class="pagination-btn <?= $i == $equipements_pagination['page'] ? 'active' : '' ?>" onclick="changePage(<?= $i ?>)">
+                                            <?= $i ?>
+                                        </button>
+                                    <?php endfor; ?>
+                                    
+                                    <?php if ($equipements_pagination['page'] < $equipements_pagination['total_pages']): ?>
+                                        <button type="button" class="pagination-btn" onclick="changePage(<?= $equipements_pagination['page'] + 1 ?>)">
+                                            Suivant &raquo;
+                                        </button>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
                         <?php endif; ?>
                     </div>
 
@@ -182,6 +237,11 @@ if (empty($users_result)) {
                 $("#navBar").load("navBar.php");
                 $("#controlPanel").load("controlPanel.php");
             });
+
+            function changePage(page) {
+                document.getElementById('equip_page').value = page;
+                document.getElementById('search-equipement-form').submit();
+            }
         </script>
     </body>
 </html>
