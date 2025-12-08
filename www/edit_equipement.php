@@ -29,18 +29,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = $_POST['nom'];
     $type_equipement = $_POST['type_equipement'];
     $commune = $_POST['commune'];
+    $proprietaire_principal_type = $_POST['proprietaire_principal_type'] ?? '';
+    $sanitaires = isset($_POST['sanitaires']) ? 'Oui' : 'Non';
+    $acces_handi_mobilite = !empty($_POST['acces_handi_mobilite']) ? $_POST['acces_handi_mobilite'] : null;
+    $acces_handi_sensoriel = !empty($_POST['acces_handi_sensoriel']) ? $_POST['acces_handi_sensoriel'] : null;
 
     if (empty($nom) || empty($type_equipement) || empty($commune)) {
         $error_message="Veuillez saisir toutes les données.";
     }
 
-    if (strlen($nom) > 100 || strlen($type_equipement) > 100 || strlen($commune) > 100) {
-        $error_message = "Un des champs dépasse la longueur maximale autorisée.";
+    if (empty($error_message)) {
+        if (strlen($nom) > 255 || strlen($type_equipement) > 100 || strlen($commune) > 255) {
+            $error_message = "Un des champs dépasse la longueur maximale autorisée.";
+        }
+        if (!empty($proprietaire_principal_type) && strlen($proprietaire_principal_type) > 100) {
+            $error_message = "Le champ propriétaire dépasse la longueur maximale autorisée.";
+        }
+        if (!empty($acces_handi_mobilite) && strlen($acces_handi_mobilite) > 100) {
+            $error_message = "Le champ accès handicapé mobilité dépasse la longueur maximale autorisée (100 caractères).";
+        }
+        if (!empty($acces_handi_sensoriel) && strlen($acces_handi_sensoriel) > 100) {
+            $error_message = "Le champ accès handicapé sensoriel dépasse la longueur maximale autorisée (100 caractères).";
+        }
     }
 
     if (empty($error_message)) {
-        $stmt = $bdd->prepare("UPDATE equipements_sportifs SET nom = ?, type_equipement = ?, commune = ? WHERE id = ?");
-        $stmt->execute([$nom, $type_equipement, $commune, $id]);
+        $stmt = $bdd->prepare("UPDATE equipements_sportifs SET nom = ?, type_equipement = ?, commune = ?, proprietaire_principal_type = ?, sanitaires = ?, acces_handi_mobilite = ?, acces_handi_sensoriel = ?, maj_date = NOW() WHERE id = ?");
+        $stmt->execute([$nom, $type_equipement, $commune, $proprietaire_principal_type, $sanitaires, $acces_handi_mobilite, $acces_handi_sensoriel, $id]);
 
         header("Location: dashboard.php");
         exit;
@@ -80,6 +95,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     <label>Commune</label>
                     <input type="text" name="commune" value="<?= htmlspecialchars($equip['commune']) ?>">
+
+                    <label>Propriétaire principal</label>
+                    <input type="text" name="proprietaire_principal_type" value="<?= htmlspecialchars($equip['proprietaire_principal_type'] ?? '') ?>">
+
+                    <label>Sanitaires disponibles</label>
+                    <input type="checkbox" name="sanitaires" <?= ($equip['sanitaires'] === 'Oui') ? 'checked' : '' ?>>
+
+                    <label>Accès handicapé mobilité</label>
+                    <input type="text" name="acces_handi_mobilite" value="<?= htmlspecialchars($equip['acces_handi_mobilite'] ?? '') ?>">
+
+                    <label>Accès handicapé sensoriel</label>
+                    <input type="text" name="acces_handi_sensoriel" value="<?= htmlspecialchars($equip['acces_handi_sensoriel'] ?? '') ?>">
 
                     <button type="submit">Enregistrer</button>
                     <a href="dashboard.php" class="cp-btn">Annuler</a>
