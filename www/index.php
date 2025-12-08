@@ -204,7 +204,10 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                         body: JSON.stringify({ id: equipId })
                     });
                     const data = await response.json();
-                    console.log('Remplissage incrémenté:', data);
+                    
+                    if (data.success) {
+                        await loadEquipementDetails(equipId);
+                    }
                 } catch (error) {
                     console.error('Erreur incrémentation:', error);
                 }
@@ -251,7 +254,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     html += `<a href="https://www.google.com/maps/dir/?api=1&destination=${equip.latitude},${equip.longitude}" 
                               target="_blank" 
                               class="btn-itinerary" 
-                              onclick="incrementerRemplissage(${equip.id})">
+                              onclick="incrementerRemplissage('${equip.id}');">
                               <i class="fas fa-directions"></i> Itinéraire
                             </a>`;
                 }

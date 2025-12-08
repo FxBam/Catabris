@@ -18,9 +18,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 require_once "../bdd/connexion_bdd.php";
 
 $input = json_decode(file_get_contents('php://input'), true);
-$id = isset($input['id']) ? intval($input['id']) : 0;
+$id = isset($input['id']) ? trim($input['id']) : '';
 
-if ($id <= 0) {
+if (empty($id)) {
     http_response_code(400);
     echo json_encode(['success' => false, 'error' => 'ID invalide']);
     exit();
