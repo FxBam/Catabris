@@ -219,11 +219,14 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 if (equip.type_equipement) {
                     html += `<span class="badge-info">${equip.type_equipement}</span>`;
                 }
-                if (equip.sanitaires) {
+                if (equip.sanitaires && equip.sanitaires === 'Oui') {
                     html += `<span class="badge-info"><i class="fas fa-restroom"></i> Sanitaires</span>`;
                 }
-                if (equip.acces_handi_mobilite) {
+                if (equip.acces_handi_mobilite && equip.acces_handi_mobilite !== '' && equip.acces_handi_mobilite !== null) {
                     html += `<span class="badge-info"><i class="fas fa-wheelchair"></i> PMR</span>`;
+                }
+                if (equip.acces_handi_sensoriel && equip.acces_handi_sensoriel !== '' && equip.acces_handi_sensoriel !== null) {
+                    html += `<span class="badge-info"><i class="fas fa-ear-deaf"></i> Sensoriel</span>`;
                 }
                 html += '</div>';
                 

@@ -11,7 +11,7 @@ try {
         
         $sql = "SELECT id, nom, type_equipement, commune, 
                        coordonnees_y, coordonnees_x, proprietaire_principal_type, 
-                       sanitaires, acces_handi_mobilite, creation_dt, nb_remplie, nb_capacite 
+                       sanitaires, acces_handi_mobilite, acces_handi_sensoriel, creation_dt, nb_remplie, nb_capacite 
                 FROM equipements_sportifs WHERE id = ? LIMIT 1";
         
         $stmt = $bdd->prepare($sql);
@@ -27,8 +27,9 @@ try {
                 'latitude' => $equip['coordonnees_y'] ? (float)$equip['coordonnees_y'] : null,
                 'longitude' => $equip['coordonnees_x'] ? (float)$equip['coordonnees_x'] : null,
                 'proprietaire_principal_type' => $equip['proprietaire_principal_type'],
-                'sanitaires' => !empty($equip['sanitaires']) && $equip['sanitaires'] !== 'Non',
-                'acces_handi_mobilite' => !empty($equip['acces_handi_mobilite']),
+                'sanitaires' => $equip['sanitaires'],
+                'acces_handi_mobilite' => $equip['acces_handi_mobilite'],
+                'acces_handi_sensoriel' => $equip['acces_handi_sensoriel'],
                 'creation_dt' => $equip['creation_dt'],
                 'nb_remplie' => (int)($equip['nb_remplie'] ?? 0),
                 'nb_capacite' => (int)($equip['nb_capacite'] ?? 0),
@@ -45,7 +46,7 @@ try {
     $offset = ($page - 1) * $limit;
 
     $columns = "id, nom, type_equipement, commune, coordonnees_y, coordonnees_x, 
-                proprietaire_principal_type, proprietaire_principal_nom, sanitaires, acces_handi_mobilite, 
+                proprietaire_principal_type, proprietaire_principal_nom, sanitaires, acces_handi_mobilite, acces_handi_sensoriel, 
                 acces_libre, website, creation_dt, maj_date, nb_remplie, nb_capacite";
     
     $sql = "SELECT $columns FROM equipements_sportifs WHERE coordonnees_y IS NOT NULL AND coordonnees_x IS NOT NULL";
@@ -98,8 +99,9 @@ try {
             'longitude' => !empty($equip['coordonnees_x']) ? floatval($equip['coordonnees_x']) : null,
             'proprietaire_principal_type' => $equip['proprietaire_principal_type'] ?? null,
             'proprietaire_principal_nom' => $equip['proprietaire_principal_nom'] ?? null,
-            'sanitaires' => !empty($equip['sanitaires']),
-            'acces_handi_mobilite' => !empty($equip['acces_handi_mobilite']),
+            'sanitaires' => $equip['sanitaires'] ?? null,
+            'acces_handi_mobilite' => $equip['acces_handi_mobilite'] ?? null,
+            'acces_handi_sensoriel' => $equip['acces_handi_sensoriel'] ?? null,
             'acces_libre' => $equip['acces_libre'] ?? null,
             'website' => $equip['website'] ?? null,
             'creation_dt' => $equip['creation_dt'] ?? null,
