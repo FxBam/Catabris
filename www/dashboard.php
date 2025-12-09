@@ -193,6 +193,7 @@ if (empty($users_result)) {
                         <form method="POST">
                             <input type="text" name="search_user" placeholder="Nom ou prénom">
                             <button type="submit">Rechercher</button>
+                            <a href="add_user.php" class="btn-add"><i class="fa fa-plus"></i> Ajouter un utilisateur</a>
                         </form>
                         <table>
                             <thead>

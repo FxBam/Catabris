@@ -20,12 +20,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acces_handi_mobilite = !empty($_POST['acces_handi_mobilite']) ? $_POST['acces_handi_mobilite'] : null;
     $acces_handi_sensoriel = !empty($_POST['acces_handi_sensoriel']) ? $_POST['acces_handi_sensoriel'] : null;
 
-    // Validation des champs obligatoires
     if (empty($nom) || empty($type_equipement) || empty($commune) || empty($adresse)) {
         $error_message = "Veuillez saisir toutes les données obligatoires (nom, type, commune, adresse).";
     }
 
-    // Validation des longueurs
     if (empty($error_message)) {
         if (strlen($nom) > 255 || strlen($type_equipement) > 100 || strlen($commune) > 255) {
             $error_message = "Un des champs dépasse la longueur maximale autorisée.";
@@ -41,13 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Géocodage de l'adresse
     $coordonnees_y = null;
     $coordonnees_x = null;
     $coordonnees = null;
 
     if (empty($error_message)) {
-        // Utilisation de l'API Nominatim (OpenStreetMap) pour le géocodage
         $adresse_complete = urlencode($adresse . ', ' . $commune . ', France');
         $url = "https://nominatim.openstreetmap.org/search?q={$adresse_complete}&format=json&limit=1";
         
@@ -62,8 +58,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($response !== false) {
             $data = json_decode($response, true);
             if (!empty($data) && isset($data[0]['lat']) && isset($data[0]['lon'])) {
-                $coordonnees_y = floatval($data[0]['lat']); // latitude
-                $coordonnees_x = floatval($data[0]['lon']); // longitude
+                $coordonnees_y = floatval($data[0]['lat']);
+                $coordonnees_x = floatval($data[0]['lon']);
                 $coordonnees = $coordonnees_y . ', ' . $coordonnees_x;
             } else {
                 $error_message = "Impossible de trouver les coordonnées pour cette adresse. Veuillez vérifier l'adresse saisie.";
@@ -73,9 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Insertion en base de données
     if (empty($error_message)) {
-        // Génération d'un ID unique
         $new_id = 'E' . strtoupper(substr(md5(uniqid(mt_rand(), true)), 0, 12));
         
         $stmt = $bdd->prepare("INSERT INTO equipements_sportifs (
