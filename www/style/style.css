@@ -480,6 +480,28 @@ body.dashboard-page main {
     background-color: #555;
 }
 
+/* Bouton d'ajout d'équipement */
+.btn-add {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #2e7d32;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.btn-add:hover {
+    background-color: #1b5e20;
+}
+
+.btn-add i {
+    margin-right: 5px;
+}
+
 .compte-admin-checkbox label {
     display: fixed;
     align-items: center;

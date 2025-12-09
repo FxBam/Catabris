@@ -100,6 +100,7 @@ if (empty($users_result)) {
                             <input type="text" name="search_equipement" placeholder="Nom de l'équipement" value="<?= htmlspecialchars($_POST['search_equipement'] ?? '') ?>">
                             <input type="hidden" name="equip_page" id="equip_page" value="<?= $equipements_pagination['page'] ?>">
                             <button type="submit">Rechercher</button>
+                            <a href="add_equipement.php" class="btn-add"><i class="fa fa-plus"></i> Ajouter un équipement</a>
                         </form>
                         <?php if (!empty($equipements_result)): ?>
                             <p>
