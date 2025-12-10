@@ -134,6 +134,8 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             let selectedEquipementId = null;
             let selectedMarkerCoords = null;
             let activeSearchQuery = '';
+            let userFavoris = [];
+            let isUserLoggedIn = <?= isset($_SESSION['user']) ? 'true' : 'false' ?>;
             
             function showLoading(show) {
                 document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
@@ -336,7 +338,14 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             }
             
             function showEquipementPanel(equip) {
-                document.getElementById('panel-title').textContent = equip.nom || 'Équipement';
+                const equipIdStr = String(equip.id);
+                const isFavorite = userFavoris.includes(equipIdStr);
+                const favoriteIconClass = isFavorite ? 'fas fa-star favorite-active' : 'far fa-star';
+                
+                document.getElementById('panel-title').innerHTML = `
+                    <span>${equip.nom || 'Équipement'}</span>
+                    ${isUserLoggedIn ? `<i class="${favoriteIconClass} favorite-icon" data-equip-id="${equipIdStr}" title="${isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}"></i>` : ''}
+                `;
                 
                 let html = '';
                 
@@ -383,6 +392,63 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 
                 document.getElementById('panel-body').innerHTML = html;
                 document.getElementById('equipement-panel').classList.add('active');
+                
+                const favoriteIcon = document.querySelector('.favorite-icon');
+                if (favoriteIcon) {
+                    favoriteIcon.addEventListener('click', () => toggleFavorite(equipIdStr));
+                }
+            }
+            
+            async function loadUserFavoris() {
+                if (!isUserLoggedIn) return;
+                
+                try {
+                    const response = await fetch(`${API_BASE}/favoris.php`, {
+                        credentials: 'same-origin'
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        userFavoris = data.favoris.map(id => String(id));
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement favoris:', error);
+                }
+            }
+            
+            async function toggleFavorite(equipId) {
+                if (!isUserLoggedIn) return;
+                
+                const equipIdStr = String(equipId);
+                const isFavorite = userFavoris.includes(equipIdStr);
+                const action = isFavorite ? 'remove' : 'add';
+                
+                try {
+                    const response = await fetch(`${API_BASE}/favoris.php`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ equipement_id: equipIdStr, action: action }),
+                        credentials: 'same-origin'
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        userFavoris = data.favoris.map(id => String(id));
+                        const icon = document.querySelector('.favorite-icon');
+                        if (icon) {
+                            if (userFavoris.includes(equipIdStr)) {
+                                icon.classList.remove('far');
+                                icon.classList.add('fas', 'favorite-active');
+                                icon.title = 'Retirer des favoris';
+                            } else {
+                                icon.classList.remove('fas', 'favorite-active');
+                                icon.classList.add('far');
+                                icon.title = 'Ajouter aux favoris';
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erreur toggle favori:', error);
+                }
             }
             
             async function loadSuggestions(query) {
@@ -536,6 +602,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             
             map.whenReady(function() {
                 loadTypesEquipements();
+                loadUserFavoris();
                 const initialQuery = '<?= $query ?>';
                 if (initialQuery) {
                     loadEquipements(initialQuery);

@@ -840,6 +840,26 @@ body.dashboard-page main {
 .panel-header h3 {
     margin: 0;
     font-size: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.favorite-icon {
+    cursor: pointer;
+    font-size: 18px;
+    color: #ccc;
+    transition: all 0.2s ease;
+}
+
+.favorite-icon:hover {
+    color: #ffc107;
+    transform: scale(1.1);
+}
+
+.favorite-icon.favorite-active {
+    color: #ffc107;
 }
 
 .close-panel {
