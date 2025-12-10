@@ -132,6 +132,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             let searchTimeout = null;
             let selectedMarker = null;
             let selectedEquipementId = null;
+            let selectedMarkerCoords = null;
             let activeSearchQuery = '';
             
             function showLoading(show) {
@@ -207,10 +208,6 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                             }
                         });
                         
-                        if (selectedEquipementId) {
-                            findAndSelectMarkerById(selectedEquipementId);
-                        }
-                        
                         console.log(`${data.markers.length} marqueurs chargés`);
                     }
                 } catch (error) {
@@ -221,26 +218,44 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             }
             
             function selectMarker(marker) {
-                if (selectedMarker && selectedMarker !== marker) {
-                    selectedMarker.setIcon(defaultIcon);
-                }
-                marker.setIcon(selectedIcon);
-                selectedMarker = marker;
+                deselectMarker();
+                
                 selectedEquipementId = marker.equipementId;
+                selectedMarkerCoords = marker.getLatLng();
+                
+                selectedMarker = L.marker(selectedMarkerCoords, { icon: selectedIcon, zIndexOffset: 1000 });
+                selectedMarker.equipementId = selectedEquipementId;
+                selectedMarker.addTo(map);
+            }
+            
+            function selectMarkerByCoords(lat, lon, equipId) {
+                deselectMarker();
+                
+                selectedEquipementId = equipId;
+                selectedMarkerCoords = L.latLng(lat, lon);
+                
+                selectedMarker = L.marker(selectedMarkerCoords, { icon: selectedIcon, zIndexOffset: 1000 });
+                selectedMarker.equipementId = selectedEquipementId;
+                selectedMarker.addTo(map);
             }
             
             function deselectMarker() {
                 if (selectedMarker) {
-                    selectedMarker.setIcon(defaultIcon);
+                    map.removeLayer(selectedMarker);
                     selectedMarker = null;
                 }
                 selectedEquipementId = null;
+                selectedMarkerCoords = null;
             }
             
             function findAndSelectMarkerById(equipId) {
+                if (selectedMarkerCoords && selectedEquipementId == equipId) {
+                    return true;
+                }
+                
                 let found = false;
                 markers.eachLayer(function(layer) {
-                    if (layer.equipementId == equipId) {
+                    if (layer.equipementId == equipId && !found) {
                         selectMarker(layer);
                         found = true;
                     }
@@ -248,7 +263,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 return found;
             }
             
-            async function loadEquipementDetails(equipId) {
+            async function loadEquipementDetails(equipId, createMarker = false) {
                 showLoading(true);
                 
                 try {
@@ -257,6 +272,11 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     
                     if (data.success && data.data && data.data.length > 0) {
                         const equip = data.data[0];
+                        
+                        if (createMarker) {
+                            selectMarkerByCoords(equip.latitude, equip.longitude, equipId);
+                        }
+                        
                         showEquipementPanel(equip);
                         map.setView([equip.latitude, equip.longitude], 15);
                     } else {
@@ -412,14 +432,10 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                                 const equipId = this.dataset.id;
                                 
                                 if (lat && lon) {
+                                    selectMarkerByCoords(lat, lon, equipId);
                                     map.setView([lat, lon], 18);
                                     currentBounds = null;
                                     await loadEquipements();
-                                    
-                                    setTimeout(() => {
-                                        findAndSelectMarkerById(equipId);
-                                    }, 300);
-                                    
                                     await loadEquipementDetails(equipId);
                                 }
                                 
