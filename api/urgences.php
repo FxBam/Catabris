@@ -68,11 +68,22 @@ try {
             echo json_encode(['success' => false, 'error' => 'ID requis'], JSON_UNESCAPED_UNICODE);
             exit;
         }
-        
-        $stmt = $bdd->prepare("DELETE FROM urgences WHERE id = ?");
+
+        $stmt = $bdd->prepare("SELECT commune FROM urgences WHERE id = ?");
         $stmt->execute([$input['id']]);
-        
-        echo json_encode(['success' => true, 'message' => 'Mode urgence désactivé'], JSON_UNESCAPED_UNICODE);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($row && isset($row['commune'])) {
+            $commune = $row['commune'];
+
+            $upd = $bdd->prepare("UPDATE equipements_sportifs SET nb_remplie = 0 WHERE commune = ?");
+            $upd->execute([$commune]);
+        }
+
+        $del = $bdd->prepare("DELETE FROM urgences WHERE id = ?");
+        $del->execute([$input['id']]);
+
+        echo json_encode(['success' => true, 'message' => 'Mode urgence désactivé', 'commune_reset' => $row['commune'] ?? null], JSON_UNESCAPED_UNICODE);
         exit;
     }
     
