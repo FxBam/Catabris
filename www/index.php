@@ -132,12 +132,17 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             let searchTimeout = null;
             let selectedMarker = null;
             let selectedEquipementId = null;
+            let activeSearchQuery = '';
             
             function showLoading(show) {
                 document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
             }
             
-            async function loadEquipements(query = '') {
+            async function loadEquipements(query = null) {
+                if (query !== null) {
+                    activeSearchQuery = query;
+                }
+                
                 const bounds = map.getBounds();
                 const params = new URLSearchParams({
                     limit: 4000,
@@ -147,8 +152,8 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     maxLon: bounds.getEast()
                 });
                 
-                if (query) {
-                    params.append('q', query);
+                if (activeSearchQuery) {
+                    params.append('q', activeSearchQuery);
                 }
                 
                 const commune = document.getElementById('filter-commune').value.trim();
@@ -161,6 +166,8 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 if (pmr) params.append('pmr', '1');
                 if (sensoriel) params.append('sensoriel', '1');
                 
+                const hasActiveFilters = activeSearchQuery || commune || typeEquip || pmr || sensoriel;
+                
                 const newBounds = {
                     minLat: bounds.getSouth(),
                     maxLat: bounds.getNorth(),
@@ -168,7 +175,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     maxLon: bounds.getEast()
                 };
                 
-                if (currentBounds && !query &&
+                if (currentBounds && !hasActiveFilters &&
                     Math.abs(currentBounds.minLat - newBounds.minLat) < 0.05 &&
                     Math.abs(currentBounds.maxLat - newBounds.maxLat) < 0.05 &&
                     Math.abs(currentBounds.minLon - newBounds.minLon) < 0.05 &&
@@ -365,9 +372,14 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
                 
                 try {
+                    const bounds = map.getBounds();
                     const params = new URLSearchParams({
                         q: query,
-                        limit: 10
+                        limit: 10,
+                        minLat: bounds.getSouth(),
+                        maxLat: bounds.getNorth(),
+                        minLon: bounds.getWest(),
+                        maxLon: bounds.getEast()
                     });
                     
                     const commune = document.getElementById('filter-commune').value.trim();
@@ -430,14 +442,21 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             
             document.getElementById('search-input').addEventListener('input', function() {
                 clearTimeout(searchTimeout);
-                searchTimeout = setTimeout(() => loadSuggestions(this.value), 300);
+                const value = this.value;
+                searchTimeout = setTimeout(() => {
+                    activeSearchQuery = value;
+                    currentBounds = null;
+                    loadEquipements();
+                    loadSuggestions(value);
+                }, 300);
             });
             
             document.getElementById('search-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     document.getElementById('suggestions-list').style.display = 'none';
+                    activeSearchQuery = this.value;
                     currentBounds = null;
-                    loadEquipements(this.value);
+                    loadEquipements();
                 }
             });
             
@@ -462,19 +481,23 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             });
             
             document.getElementById('apply-filters').addEventListener('click', function() {
+                activeSearchQuery = document.getElementById('search-input').value;
                 currentBounds = null;
-                loadEquipements(document.getElementById('search-input').value);
+                loadEquipements();
                 document.getElementById('search-settings').classList.remove('active');
                 document.getElementById('settings-btn').classList.remove('active');
             });
             
             document.getElementById('reset-filters').addEventListener('click', function() {
+                document.getElementById('search-input').value = '';
                 document.getElementById('filter-commune').value = '';
                 document.getElementById('filter-type').value = '';
                 document.getElementById('filter-pmr').checked = false;
                 document.getElementById('filter-sensoriel').checked = false;
+                document.getElementById('suggestions-list').style.display = 'none';
+                activeSearchQuery = '';
                 currentBounds = null;
-                loadEquipements(document.getElementById('search-input').value);
+                loadEquipements();
             });
             
             async function loadTypesEquipements() {
