@@ -96,6 +96,25 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
             
+            const defaultIcon = L.icon({
+                iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            
+            const selectedIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
+            
             const markers = L.markerClusterGroup({
                 chunkedLoading: true,
                 chunkInterval: 50,
@@ -111,6 +130,8 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             let currentBounds = null;
             let loadTimeout = null;
             let searchTimeout = null;
+            let selectedMarker = null;
+            let selectedEquipementId = null;
             
             function showLoading(show) {
                 document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
@@ -167,16 +188,21 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                         
                         data.markers.forEach(marker => {
                             if (marker.latitude && marker.longitude) {
-                                const leafletMarker = L.marker([marker.latitude, marker.longitude]);
+                                const leafletMarker = L.marker([marker.latitude, marker.longitude], { icon: defaultIcon });
                                 leafletMarker.equipementId = marker.id;
                                 
                                 leafletMarker.on('click', async function() {
+                                    selectMarker(this);
                                     await loadEquipementDetails(this.equipementId);
                                 });
                                 
                                 markers.addLayer(leafletMarker);
                             }
                         });
+                        
+                        if (selectedEquipementId) {
+                            findAndSelectMarkerById(selectedEquipementId);
+                        }
                         
                         console.log(`${data.markers.length} marqueurs chargés`);
                     }
@@ -185,6 +211,34 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 } finally {
                     showLoading(false);
                 }
+            }
+            
+            function selectMarker(marker) {
+                if (selectedMarker && selectedMarker !== marker) {
+                    selectedMarker.setIcon(defaultIcon);
+                }
+                marker.setIcon(selectedIcon);
+                selectedMarker = marker;
+                selectedEquipementId = marker.equipementId;
+            }
+            
+            function deselectMarker() {
+                if (selectedMarker) {
+                    selectedMarker.setIcon(defaultIcon);
+                    selectedMarker = null;
+                }
+                selectedEquipementId = null;
+            }
+            
+            function findAndSelectMarkerById(equipId) {
+                let found = false;
+                markers.eachLayer(function(layer) {
+                    if (layer.equipementId == equipId) {
+                        selectMarker(layer);
+                        found = true;
+                    }
+                });
+                return found;
             }
             
             async function loadEquipementDetails(equipId) {
@@ -340,14 +394,21 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                         list.style.display = 'block';
                         
                         list.querySelectorAll('.suggestion-item').forEach(item => {
-                            item.addEventListener('click', function() {
+                            item.addEventListener('click', async function() {
                                 const lat = parseFloat(this.dataset.lat);
                                 const lon = parseFloat(this.dataset.lon);
+                                const equipId = this.dataset.id;
                                 
                                 if (lat && lon) {
-                                    map.setView([lat, lon], 15);
+                                    map.setView([lat, lon], 18);
                                     currentBounds = null;
-                                    loadEquipements();
+                                    await loadEquipements();
+                                    
+                                    setTimeout(() => {
+                                        findAndSelectMarkerById(equipId);
+                                    }, 300);
+                                    
+                                    await loadEquipementDetails(equipId);
                                 }
                                 
                                 document.getElementById('suggestions-list').style.display = 'none';
@@ -364,6 +425,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             
             document.getElementById('close-panel').addEventListener('click', function() {
                 document.getElementById('equipement-panel').classList.remove('active');
+                deselectMarker();
             });
             
             document.getElementById('search-input').addEventListener('input', function() {
