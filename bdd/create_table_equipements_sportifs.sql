@@ -77,8 +77,11 @@ CREATE TABLE equipements_sportifs (
  	type_code VARCHAR(4), -- 1402
  	rnb_id VARCHAR(50), -- NM2R8T1HJ3BF
  	commune VARCHAR(255), --  Saintes
-	nb_capacite INT(5) DEFAULT FLOOR(100 + RAND(CRC32(UUID())) * (5000 - 100 + 1)),
+	nb_capacite INT(5) DEFAULT 0,
 	nb_remplie INT(5) DEFAULT 0,
 
     imported_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+UPDATE equipements_sportifs
+SET nb_capacite = FLOOR(100 + RAND() * 4900);
