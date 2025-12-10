@@ -130,7 +130,6 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     params.append('q', query);
                 }
                 
-                // Ajouter les filtres avancés
                 const commune = document.getElementById('filter-commune').value.trim();
                 const typeEquip = document.getElementById('filter-type').value;
                 const pmr = document.getElementById('filter-pmr').checked;
@@ -317,7 +316,6 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                         limit: 10
                     });
                     
-                    // Ajouter les filtres avancés aux suggestions
                     const commune = document.getElementById('filter-commune').value.trim();
                     const typeEquip = document.getElementById('filter-type').value;
                     const pmr = document.getElementById('filter-pmr').checked;
@@ -386,29 +384,28 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 loadTimeout = setTimeout(() => loadEquipements(), 500);
             });
             
-            // Gestion du menu paramètres
             document.getElementById('settings-btn').addEventListener('click', function(e) {
                 e.stopPropagation();
                 const settingsPanel = document.getElementById('search-settings');
                 settingsPanel.classList.toggle('active');
+                this.classList.toggle('active');
             });
             
-            // Fermer le panneau paramètres en cliquant ailleurs
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('#floating-panel')) {
                     document.getElementById('suggestions-list').style.display = 'none';
                     document.getElementById('search-settings').classList.remove('active');
+                    document.getElementById('settings-btn').classList.remove('active');
                 }
             });
             
-            // Appliquer les filtres
             document.getElementById('apply-filters').addEventListener('click', function() {
                 currentBounds = null;
                 loadEquipements(document.getElementById('search-input').value);
                 document.getElementById('search-settings').classList.remove('active');
+                document.getElementById('settings-btn').classList.remove('active');
             });
             
-            // Réinitialiser les filtres
             document.getElementById('reset-filters').addEventListener('click', function() {
                 document.getElementById('filter-commune').value = '';
                 document.getElementById('filter-type').value = '';
@@ -418,7 +415,6 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 loadEquipements(document.getElementById('search-input').value);
             });
             
-            // Charger les types d'équipements
             async function loadTypesEquipements() {
                 try {
                     const response = await fetch(`${API_BASE}/equipements.php?types=1`);
