@@ -6,7 +6,7 @@ body {
     background-color: #f4f4f9;
     color: #333;
     overflow: hidden;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* Barre de navigation */
@@ -118,8 +118,8 @@ main {
     flex: 1;
     min-width: 0;
     min-height: 0;
-    overflow: hidden;
-    height: 100%;
+    overflow-y: auto;
+    height: auto;
 }
 
 main h1 {
