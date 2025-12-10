@@ -105,20 +105,21 @@ main p a:hover {
 }
 
 main {
-    padding: 2rem;
+    padding: 0;
     text-align: center;
     background-color: #e8f5e9;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    margin: 0 auto;
-    display: fixed;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0;
+    display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     flex: 1;
     min-width: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+    min-height: 0;
+    overflow: hidden;
+    height: 100%;
 }
 
 main h1 {
@@ -162,8 +163,9 @@ main h3 {
 
 .container {
     display: flex;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 58px);
     overflow: hidden;
+    flex: 1;
 }
 
 /* Control panel*/
@@ -253,7 +255,7 @@ main h3 {
 }
 
 .mapouter {
-    height: 90%;
+    height: 100%;
     width: 100%;
     flex: 1;
     display: flex;
@@ -554,15 +556,16 @@ body.dashboard-page main {
 #map-container {
     position: relative;
     width: 100%;
-    height: calc(100vh - 100px);
+    height: 100%;
     overflow: hidden;
+    flex: 1;
 }
 
 #map {
     width: 100%;
     height: 100%;
     z-index: 1;
-    border-radius: 12px;
+    border-radius: 0;
 }
 
 #floating-panel {
