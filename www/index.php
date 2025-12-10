@@ -87,6 +87,25 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             </main>
         </div>
         
+        <div id="urgence-popup" class="urgence-popup" style="display: none;">
+            <div class="urgence-popup-content">
+                <div class="urgence-popup-header">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h2>Mode Urgence Actif</h2>
+                </div>
+                <p id="urgence-popup-message"></p>
+                <p class="urgence-popup-info">Activez votre géolocalisation pour trouver les équipements les plus proches (stades avec accès PMR ou sensoriel).</p>
+                <div class="urgence-popup-buttons">
+                    <button type="button" id="btn-geoloc" class="btn-geoloc">
+                        <i class="fas fa-location-crosshairs"></i> Activer la géolocalisation
+                    </button>
+                    <button type="button" id="btn-close-urgence" class="btn-close-urgence">
+                        Fermer
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <script>
             const API_BASE = '/Catabris/api';
             
@@ -136,6 +155,18 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             let activeSearchQuery = '';
             let userFavoris = [];
             let isUserLoggedIn = <?= isset($_SESSION['user']) ? 'true' : 'false' ?>;
+            let urgencesActives = [];
+            let userLocationMarker = null;
+            let urgenceModeActive = false;
+            
+            const userLocationIcon = L.icon({
+                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+                shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34],
+                shadowSize: [41, 41]
+            });
             
             function showLoading(show) {
                 document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
@@ -603,12 +634,92 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             map.whenReady(function() {
                 loadTypesEquipements();
                 loadUserFavoris();
+                checkUrgences();
                 const initialQuery = '<?= $query ?>';
                 if (initialQuery) {
                     loadEquipements(initialQuery);
                 } else {
                     loadEquipements();
                 }
+            });
+            
+            async function checkUrgences() {
+                try {
+                    const response = await fetch(`${API_BASE}/urgences.php`);
+                    const data = await response.json();
+                    
+                    if (data.success && data.urgences && data.urgences.length > 0) {
+                        urgencesActives = data.urgences;
+                        const communes = urgencesActives.map(u => u.commune).join(', ');
+                        document.getElementById('urgence-popup-message').textContent = 
+                            `Une urgence est active dans : ${communes}`;
+                        document.getElementById('urgence-popup').style.display = 'flex';
+                    }
+                } catch (error) {
+                    console.error('Erreur vérification urgences:', error);
+                }
+            }
+            
+            document.getElementById('btn-close-urgence').addEventListener('click', function() {
+                document.getElementById('urgence-popup').style.display = 'none';
+            });
+            
+            document.getElementById('btn-geoloc').addEventListener('click', function() {
+                if (!navigator.geolocation) {
+                    alert('La géolocalisation n\'est pas supportée par votre navigateur');
+                    return;
+                }
+                
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Localisation en cours...';
+                this.disabled = true;
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        
+                        if (userLocationMarker) {
+                            map.removeLayer(userLocationMarker);
+                        }
+                        
+                        userLocationMarker = L.marker([lat, lon], { 
+                            icon: userLocationIcon, 
+                            zIndexOffset: 2000 
+                        }).addTo(map);
+                        userLocationMarker.bindPopup('<strong>Votre position</strong>').openPopup();
+                        
+                        document.getElementById('urgence-popup').style.display = 'none';
+                        
+                        urgenceModeActive = true;
+                        document.getElementById('filter-type').value = 'Stade';
+                        document.getElementById('filter-pmr').checked = true;
+                        currentBounds = null;
+                        loadEquipements();
+                        
+                        map.setView([lat, lon], 13);
+                        
+                        document.getElementById('btn-geoloc').innerHTML = '<i class="fas fa-location-crosshairs"></i> Activer la géolocalisation';
+                        document.getElementById('btn-geoloc').disabled = false;
+                    },
+                    function(error) {
+                        let message = 'Impossible d\'obtenir votre position';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                message = 'Vous avez refusé la géolocalisation';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                message = 'Position indisponible';
+                                break;
+                            case error.TIMEOUT:
+                                message = 'Délai de localisation dépassé';
+                                break;
+                        }
+                        alert(message);
+                        document.getElementById('btn-geoloc').innerHTML = '<i class="fas fa-location-crosshairs"></i> Activer la géolocalisation';
+                        document.getElementById('btn-geoloc').disabled = false;
+                    },
+                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+                );
             });
             
             $(function() {

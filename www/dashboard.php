@@ -92,6 +92,20 @@ if (empty($users_result)) {
                     </div>
                 </div>
 
+                <div class="urgence-section">
+                    <h2><i class="fa fa-exclamation-triangle"></i> Mode Urgence</h2>
+                    <div class="urgence-form">
+                        <input type="text" id="urgence-commune" placeholder="Nom de la commune">
+                        <button type="button" id="btn-activer-urgence" class="btn-urgence">
+                            <i class="fa fa-bolt"></i> Activer le mode urgence
+                        </button>
+                    </div>
+                    <div id="urgences-actives">
+                        <h3>Urgences actives</h3>
+                        <div id="urgences-liste"></div>
+                    </div>
+                </div>
+
                 <div class="dashboard-modification">
 
                     <div class="search-section">
@@ -238,11 +252,80 @@ if (empty($users_result)) {
             $(function() {
                 $("#navBar").load("navBar.php");
                 $("#controlPanel").load("controlPanel.php");
+                loadUrgences();
             });
 
             function changePage(page) {
                 document.getElementById('equip_page').value = page;
                 document.getElementById('search-equipement-form').submit();
+            }
+
+            function loadUrgences() {
+                fetch('/Catabris/api/urgences.php', { credentials: 'same-origin' })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success && data.urgences) {
+                            const liste = document.getElementById('urgences-liste');
+                            if (data.urgences.length === 0) {
+                                liste.innerHTML = '<p class="no-urgence">Aucune urgence active</p>';
+                            } else {
+                                liste.innerHTML = data.urgences.map(u => `
+                                    <div class="urgence-item">
+                                        <div class="urgence-info">
+                                            <strong>${u.commune}</strong>
+                                            <span>Activé par ${u.activateur_nom} le ${new Date(u.date_activation).toLocaleString('fr-FR')}</span>
+                                        </div>
+                                        <button class="btn-stop-urgence" onclick="stopUrgence(${u.id}, '${u.commune}')">
+                                            <i class="fa fa-stop"></i> Arrêter
+                                        </button>
+                                    </div>
+                                `).join('');
+                            }
+                        }
+                    });
+            }
+
+            document.getElementById('btn-activer-urgence').addEventListener('click', function() {
+                const commune = document.getElementById('urgence-commune').value.trim();
+                if (!commune) {
+                    alert('Veuillez entrer un nom de commune');
+                    return;
+                }
+                
+                fetch('/Catabris/api/urgences.php', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ commune: commune })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('urgence-commune').value = '';
+                        loadUrgences();
+                    } else {
+                        alert(data.error || 'Erreur lors de l\'activation');
+                    }
+                });
+            });
+
+            function stopUrgence(id, commune) {
+                if (!confirm(`Arrêter le mode urgence pour ${commune} ?`)) return;
+                
+                fetch('/Catabris/api/urgences.php', {
+                    method: 'DELETE',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        loadUrgences();
+                    } else {
+                        alert(data.error || 'Erreur lors de la désactivation');
+                    }
+                });
             }
         </script>
     </body>
