@@ -6,6 +6,15 @@ header('Access-Control-Allow-Methods: GET');
 require_once dirname(__DIR__) . "/bdd/connexion_bdd.php";
 
 try {
+    // Endpoint pour récupérer les types d'équipements
+    if (isset($_GET['types']) && $_GET['types'] === '1') {
+        $sql = "SELECT DISTINCT type_equipement FROM equipements_sportifs WHERE type_equipement IS NOT NULL AND type_equipement != '' ORDER BY type_equipement";
+        $stmt = $bdd->query($sql);
+        $types = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        echo json_encode(['success' => true, 'types' => $types], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
+
     if (isset($_GET['id']) && !empty($_GET['id'])) {
         $id = $_GET['id'];
         

@@ -35,6 +35,37 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     <div id="floating-panel">
                         <div id="search-container">
                             <input type="text" id="search-input" placeholder="Rechercher un équipement, ville..." value="<?= $query ?>">
+                            <button type="button" id="settings-btn" class="settings-btn" title="Paramètres de recherche">
+                                <i class="fas fa-sliders-h"></i>
+                            </button>
+                        </div>
+                        <div id="search-settings" class="search-settings">
+                            <div class="settings-group">
+                                <label for="filter-commune"><i class="fas fa-city"></i> Commune</label>
+                                <input type="text" id="filter-commune" placeholder="Filtrer par commune...">
+                            </div>
+                            <div class="settings-group">
+                                <label for="filter-type"><i class="fas fa-running"></i> Type d'équipement</label>
+                                <select id="filter-type">
+                                    <option value="">Tous les types</option>
+                                </select>
+                            </div>
+                            <div class="settings-group checkboxes">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="filter-pmr">
+                                    <i class="fas fa-wheelchair"></i>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="filter-sensoriel">
+                                    <i class="fas fa-ear-deaf"></i>
+                                </label>
+                            </div>
+                            <button type="button" id="apply-filters" class="btn-apply-filters">
+                                <i class="fas fa-search"></i> Appliquer les filtres
+                            </button>
+                            <button type="button" id="reset-filters" class="btn-reset-filters">
+                                <i class="fas fa-times"></i> Réinitialiser
+                            </button>
                         </div>
                         <div id="suggestions-list"></div>
                     </div>
@@ -98,6 +129,17 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 if (query) {
                     params.append('q', query);
                 }
+                
+                // Ajouter les filtres avancés
+                const commune = document.getElementById('filter-commune').value.trim();
+                const typeEquip = document.getElementById('filter-type').value;
+                const pmr = document.getElementById('filter-pmr').checked;
+                const sensoriel = document.getElementById('filter-sensoriel').checked;
+                
+                if (commune) params.append('commune', commune);
+                if (typeEquip) params.append('type', typeEquip);
+                if (pmr) params.append('pmr', '1');
+                if (sensoriel) params.append('sensoriel', '1');
                 
                 const newBounds = {
                     minLat: bounds.getSouth(),
@@ -270,7 +312,23 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
                 
                 try {
-                    const response = await fetch(`${API_BASE}/suggestions.php?q=${encodeURIComponent(query)}&limit=10`);
+                    const params = new URLSearchParams({
+                        q: query,
+                        limit: 10
+                    });
+                    
+                    // Ajouter les filtres avancés aux suggestions
+                    const commune = document.getElementById('filter-commune').value.trim();
+                    const typeEquip = document.getElementById('filter-type').value;
+                    const pmr = document.getElementById('filter-pmr').checked;
+                    const sensoriel = document.getElementById('filter-sensoriel').checked;
+                    
+                    if (commune) params.append('commune', commune);
+                    if (typeEquip) params.append('type', typeEquip);
+                    if (pmr) params.append('pmr', '1');
+                    if (sensoriel) params.append('sensoriel', '1');
+                    
+                    const response = await fetch(`${API_BASE}/suggestions.php?${params}`);
                     const data = await response.json();
                     
                     if (data.success && data.suggestions.length > 0) {
@@ -323,18 +381,64 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
             });
             
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('#floating-panel')) {
-                    document.getElementById('suggestions-list').style.display = 'none';
-                }
-            });
-            
             map.on('moveend', function() {
                 clearTimeout(loadTimeout);
                 loadTimeout = setTimeout(() => loadEquipements(), 500);
             });
             
+            // Gestion du menu paramètres
+            document.getElementById('settings-btn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const settingsPanel = document.getElementById('search-settings');
+                settingsPanel.classList.toggle('active');
+            });
+            
+            // Fermer le panneau paramètres en cliquant ailleurs
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('#floating-panel')) {
+                    document.getElementById('suggestions-list').style.display = 'none';
+                    document.getElementById('search-settings').classList.remove('active');
+                }
+            });
+            
+            // Appliquer les filtres
+            document.getElementById('apply-filters').addEventListener('click', function() {
+                currentBounds = null;
+                loadEquipements(document.getElementById('search-input').value);
+                document.getElementById('search-settings').classList.remove('active');
+            });
+            
+            // Réinitialiser les filtres
+            document.getElementById('reset-filters').addEventListener('click', function() {
+                document.getElementById('filter-commune').value = '';
+                document.getElementById('filter-type').value = '';
+                document.getElementById('filter-pmr').checked = false;
+                document.getElementById('filter-sensoriel').checked = false;
+                currentBounds = null;
+                loadEquipements(document.getElementById('search-input').value);
+            });
+            
+            // Charger les types d'équipements
+            async function loadTypesEquipements() {
+                try {
+                    const response = await fetch(`${API_BASE}/equipements.php?types=1`);
+                    const data = await response.json();
+                    if (data.success && data.types) {
+                        const select = document.getElementById('filter-type');
+                        data.types.forEach(type => {
+                            const option = document.createElement('option');
+                            option.value = type;
+                            option.textContent = type;
+                            select.appendChild(option);
+                        });
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement types:', error);
+                }
+            }
+            
             map.whenReady(function() {
+                loadTypesEquipements();
                 const initialQuery = '<?= $query ?>';
                 if (initialQuery) {
                     loadEquipements(initialQuery);

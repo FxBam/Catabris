@@ -16,6 +16,12 @@ try {
 
     $limit = min(50, max(1, intval($_GET['limit'] ?? 10)));
     $query = '%' . $_GET['q'] . '%';
+    
+    // Filtres avancés
+    $commune = isset($_GET['commune']) && !empty($_GET['commune']) ? '%' . $_GET['commune'] . '%' : null;
+    $typeEquip = isset($_GET['type']) && !empty($_GET['type']) ? $_GET['type'] : null;
+    $pmr = isset($_GET['pmr']) && $_GET['pmr'] === '1';
+    $sensoriel = isset($_GET['sensoriel']) && $_GET['sensoriel'] === '1';
 
     $sql = "SELECT id, nom, commune, type_equipement, coordonnees_y, coordonnees_x 
             FROM equipements_sportifs 
@@ -33,6 +39,24 @@ try {
         $params[] = $maxLat;
         $params[] = $minLon;
         $params[] = $maxLon;
+    }
+    
+    if ($commune) {
+        $sql .= " AND commune LIKE ?";
+        $params[] = $commune;
+    }
+    
+    if ($typeEquip) {
+        $sql .= " AND type_equipement = ?";
+        $params[] = $typeEquip;
+    }
+    
+    if ($pmr) {
+        $sql .= " AND acces_handi_mobilite IS NOT NULL AND acces_handi_mobilite != ''";
+    }
+    
+    if ($sensoriel) {
+        $sql .= " AND acces_handi_sensoriel IS NOT NULL AND acces_handi_sensoriel != ''";
     }
 
     $sql .= " LIMIT " . intval($limit);

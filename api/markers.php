@@ -15,6 +15,10 @@ try {
     $maxLon = isset($_GET['maxLon']) ? floatval($_GET['maxLon']) : 10.0;
     
     $query = isset($_GET['q']) && !empty($_GET['q']) ? '%' . $_GET['q'] . '%' : null;
+    $commune = isset($_GET['commune']) && !empty($_GET['commune']) ? '%' . $_GET['commune'] . '%' : null;
+    $typeEquip = isset($_GET['type']) && !empty($_GET['type']) ? $_GET['type'] : null;
+    $pmr = isset($_GET['pmr']) && $_GET['pmr'] === '1';
+    $sensoriel = isset($_GET['sensoriel']) && $_GET['sensoriel'] === '1';
     
     $gridSize = 6;
     $pointsPerCell = max(1, intval($limit / ($gridSize * $gridSize)));
@@ -38,6 +42,24 @@ try {
                 $sql .= " AND (nom LIKE ? OR commune LIKE ?)";
                 $params[] = $query;
                 $params[] = $query;
+            }
+            
+            if ($commune) {
+                $sql .= " AND commune LIKE ?";
+                $params[] = $commune;
+            }
+            
+            if ($typeEquip) {
+                $sql .= " AND type_equipement = ?";
+                $params[] = $typeEquip;
+            }
+            
+            if ($pmr) {
+                $sql .= " AND acces_handi_mobilite IS NOT NULL AND acces_handi_mobilite != ''";
+            }
+            
+            if ($sensoriel) {
+                $sql .= " AND acces_handi_sensoriel IS NOT NULL AND acces_handi_sensoriel != ''";
             }
             
             $sql .= " ORDER BY RAND() LIMIT " . $pointsPerCell;
