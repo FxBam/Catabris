@@ -368,6 +368,12 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
             }
             
+            function isCommuneUnderUrgence(commune) {
+                if (!commune) return false;
+                const c = String(commune).trim().toLowerCase();
+                return urgencesActives.some(u => u.commune && String(u.commune).trim().toLowerCase() === c);
+            }
+            
             function showEquipementPanel(equip) {
                 const equipIdStr = String(equip.id);
                 const isFavorite = userFavoris.includes(equipIdStr);
@@ -395,7 +401,8 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
                 html += '</div>';
                 
-                if (equip.nb_capacite && equip.nb_capacite > 0) {
+                const urgenceActive = isCommuneUnderUrgence(equip.commune);
+                if (equip.nb_capacite && equip.nb_capacite > 0 && urgenceActive) {
                     html += createCapacityGauge(equip.nb_remplie || 0, equip.nb_capacite);
                 }
                 
@@ -413,10 +420,11 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
                 
                 if (equip.latitude && equip.longitude) {
+                    const onclickPart = urgenceActive ? `onclick="incrementerRemplissage('${equip.id}')"` : '';
                     html += `<a href="https://www.google.com/maps/dir/?api=1&destination=${equip.latitude},${equip.longitude}" 
                               target="_blank" 
                               class="btn-itinerary" 
-                              onclick="incrementerRemplissage('${equip.id}');">
+                              ${onclickPart}>
                               <i class="fas fa-directions"></i> Itinéraire
                             </a>`;
                 }
