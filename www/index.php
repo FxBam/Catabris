@@ -94,7 +94,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     <h2>Mode Urgence Actif</h2>
                 </div>
                 <p id="urgence-popup-message"></p>
-                <p class="urgence-popup-info">Activez votre géolocalisation pour trouver les équipements les plus proches (stades avec accès PMR ou sensoriel).</p>
+                <p class="urgence-popup-info">Activez votre géolocalisation pour trouver les lieux de sécurité les plus proches (stades ou salles avec accès PMR et sensoriel).</p>
                 <div class="urgence-popup-buttons">
                     <button type="button" id="btn-geoloc" class="btn-geoloc">
                         <i class="fas fa-location-crosshairs"></i> Activer la géolocalisation

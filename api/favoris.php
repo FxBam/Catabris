@@ -89,3 +89,4 @@ try {
 } catch (Exception $e) {
     echo json_encode(['success' => false, 'error' => 'Erreur'], JSON_UNESCAPED_UNICODE);
 }
+?>
