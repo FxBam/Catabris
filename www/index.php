@@ -419,6 +419,16 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     html += `<div class="info-row"><i class="fas fa-calendar"></i><span>Créé le: ${date.toLocaleDateString('fr-FR')}</span></div>`;
                 }
                 
+                if (equip.website && equip.website !== '' && equip.website !== null) {
+                    let siteUrl = String(equip.website).trim();
+                    if (siteUrl && !/^https?:\/\//i.test(siteUrl)) {
+                        siteUrl = 'https://' + siteUrl;
+                    }
+                    html += `<a href="${siteUrl}" target="_blank" rel="noopener noreferrer" class="btn-website" style="margin-right:8px;">
+                                <i class="fas fa-globe"></i> Site web
+                             </a>`;
+                }
+
                 if (equip.latitude && equip.longitude) {
                     const onclickPart = urgenceActive ? `onclick="incrementerRemplissage('${equip.id}')"` : '';
                     html += `<a href="https://www.google.com/maps/dir/?api=1&destination=${equip.latitude},${equip.longitude}" 

@@ -19,9 +19,9 @@ try {
         $id = $_GET['id'];
         
         $sql = "SELECT id, nom, type_equipement, commune, 
-                       coordonnees_y, coordonnees_x, proprietaire_principal_type, 
-                       sanitaires, acces_handi_mobilite, acces_handi_sensoriel, creation_dt, nb_remplie, nb_capacite 
-                FROM equipements_sportifs WHERE id = ? LIMIT 1";
+                   coordonnees_y, coordonnees_x, proprietaire_principal_type, 
+                   sanitaires, acces_handi_mobilite, acces_handi_sensoriel, creation_dt, nb_remplie, nb_capacite, website 
+            FROM equipements_sportifs WHERE id = ? LIMIT 1";
         
         $stmt = $bdd->prepare($sql);
         $stmt->execute([$id]);
@@ -42,6 +42,7 @@ try {
                 'creation_dt' => $equip['creation_dt'],
                 'nb_remplie' => (int)($equip['nb_remplie'] ?? 0),
                 'nb_capacite' => (int)($equip['nb_capacite'] ?? 0),
+                'website' => $equip['website'] ?? null,
             ];
             echo json_encode(['success' => true, 'count' => 1, 'data' => [$formatted]]);
         } else {
