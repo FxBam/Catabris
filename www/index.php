@@ -176,6 +176,21 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
+
+            function handlePopupAccueil() {
+                const popup = document.getElementById("popup-accueil");
+
+                if (!popup) return;
+
+                if (urgenceModeActive === true) {
+                    popup.style.display = "none";
+                } else {
+                    popup.style.display = "flex";
+                }
+            }
+
+            window.addEventListener("load", handlePopupAccueil);
+
             
             function showLoading(show) {
                 document.getElementById('loading-indicator').style.display = show ? 'block' : 'none';
@@ -737,6 +752,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                         document.getElementById('urgence-popup').style.display = 'none';
 
                         urgenceModeActive = true;
+                        handlePopupAccueil();
                         document.getElementById('filter-pmr').checked = true;
                         document.getElementById('filter-sensoriel').checked = true;
 
@@ -779,18 +795,6 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 $("#navBar").load("navBar.php");
                 $("#controlPanel").load("controlPanel.php");
             });
-
-        window.addEventListener("load", function() {
-                const popup = document.getElementById("popup-accueil");
-
-                if(urgenceModeActive) {
-                    if (popup) popup.remove();
-                    return;
-                }
-                else{
-                    popup.style.display = "flex";
-                }
-        });
 
         document.getElementById("closePopupAccueil").addEventListener("click", function() {
             document.getElementById("popup-accueil").style.display = "none";
