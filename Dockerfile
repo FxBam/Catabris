@@ -6,7 +6,10 @@ RUN docker-php-ext-install pdo pdo_mysql mysqli
 # Copie de tout le projet à la racine
 COPY . /var/www/
 
-# Changer le DocumentRoot pour pointer vers /var/www/www au lieu de /var/www/html
+# Créer un lien symbolique du dossier api dans www pour qu'il soit accessible
+RUN ln -s /var/www/api /var/www/www/api
+
+# Changer le DocumentRoot pour pointer vers /var/www/www
 ENV APACHE_DOCUMENT_ROOT /var/www/www
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
@@ -16,7 +19,7 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.
 RUN chown -R www-data:www-data /var/www \
     && a2enmod rewrite
 
-# Configuration pour permettre les .htaccess
+# Configuration pour permettre les .htaccess et suivre les liens symboliques
 RUN echo '<Directory /var/www/www>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
