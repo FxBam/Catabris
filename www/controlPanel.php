@@ -14,7 +14,7 @@ if (isset($_SESSION['user'])) {
 
         <?php if (isset($_SESSION['user'])): ?>
             <li><a href="profil.php" title="Profil"><i class="fa fa-user"></i></a></li>
-            <li><a href="#" title="Favoris"><i class="fa-solid fa-heart"></i></a></li>
+            <li><a href="favoris.php" title="Favoris"><i class="fa-solid fa-heart"></i></a></li>
         <?php else: ?>
             <li><a href="connexion.php" title="Profil"><i class="fa fa-user"></i></a></li>
             <li><a href="connexion.php" title="Favoris"><i class="fa-solid fa-heart"></i></a></li>

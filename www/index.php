@@ -649,6 +649,17 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 } else {
                     loadEquipements();
                 }
+                try {
+                    const params = new URLSearchParams(window.location.search);
+                    if (params.has('focus')) {
+                        const focusId = params.get('focus');
+                        if (focusId) {
+                            loadEquipementDetails(focusId, true);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Erreur traitement focus param', e);
+                }
             });
             
             async function checkUrgences() {
