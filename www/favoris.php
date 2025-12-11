@@ -17,7 +17,7 @@ if (!isset($_SESSION['user'])) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>Mes favoris</title>
 </head>
-<body>
+<body class="favoris-page">
     <div id="navBar"></div>
     <div class="container">
         <div id="controlPanel" class="controlPanel"></div>
