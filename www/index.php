@@ -107,10 +107,9 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
         </div>
         
         <script>
-            // Détection automatique de l'environnement
             const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
-            ? '/Catabris/api'  // En local
-            : '/api';          // Sur Render
+            ? '/Catabris/api'
+            : '/api';
             
             const map = L.map('map').setView([46.603354, 1.888334], 6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
