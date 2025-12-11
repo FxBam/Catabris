@@ -781,11 +781,11 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             });
 
             window.onload = function() {
-                document.getElementById("popup").style.display = "block";
+                document.getElementById("popup-accueil").style.display = "block";
             };
 
             document.getElementById("closePopup").onclick = function() {
-                document.getElementById("popup").style.display = "none";
+                document.getElementById("popup-accueil").style.display = "none";
             };
 
         </script>
