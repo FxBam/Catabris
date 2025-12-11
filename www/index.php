@@ -27,6 +27,13 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
         <script src="https://unpkg.com/leaflet.markercluster@1.3.0/dist/leaflet.markercluster.js"></script>
     </head>
     <body>
+        <div id="popup-accueil" class="popup-accueil">
+            <div class="popup-accueil-content">
+                <h2>Bienvenue sur Catabris !</h2>
+                <p>Sur ce site, vous pouvez rechercher et localiser des équipements sportifs dans différentes communesn au quotidien comme en cas d'urgence.</p>
+                <button id="closePopupAccueil">J'ai compris</button>
+            </div>
+        </div>
         <div id="navBar"></div>
         <div class="container">
             <div id="controlPanel" class="controlPanel"></div>
@@ -772,6 +779,15 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 $("#navBar").load("navBar.php");
                 $("#controlPanel").load("controlPanel.php");
             });
+
+            window.onload = function() {
+                document.getElementById("popup").style.display = "block";
+            };
+
+            document.getElementById("closePopup").onclick = function() {
+                document.getElementById("popup").style.display = "none";
+            };
+
         </script>
     </body>
 </html>
