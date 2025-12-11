@@ -1,8 +1,8 @@
 <?php
-$host = "mysql.infuseting.fr";
+$host = "localhost";
 $dbname = "catabris";
-$user = "catabris";
-$pass = 'yZdXwjMC$fg5x^P5!8';
+$user = "root";
+$pass = '';
 
 try {
     $bdd = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $user, $pass);
