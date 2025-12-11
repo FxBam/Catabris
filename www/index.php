@@ -30,7 +30,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
         <div id="popup-accueil" class="popup-accueil">
             <div class="popup-accueil-content">
                 <h2>Bienvenue sur Catabris !</h2>
-                <p>Sur ce site, vous pouvez rechercher et localiser des équipements sportifs dans différentes communesn au quotidien comme en cas d'urgence.</p>
+                <p>Sur ce site, vous pouvez rechercher et localiser des équipements sportifs dans différentes communes. Utile en cas d'urgence par exemple 😉...</p>
                 <button id="closePopupAccueil">J'ai compris</button>
             </div>
         </div>
@@ -781,8 +781,10 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             });
 
         window.addEventListener("load", function() {
-            const popup = document.getElementById("popup-accueil");
-            popup.style.display = "flex";
+            if (!urgenceModeActive) {
+                const popup = document.getElementById("popup-accueil");
+                popup.style.display = "flex";
+            }
         });
 
         document.getElementById("closePopupAccueil").addEventListener("click", function() {
