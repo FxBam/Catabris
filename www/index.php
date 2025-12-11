@@ -781,10 +781,15 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             });
 
         window.addEventListener("load", function() {
-            if (!urgenceModeActive) {
                 const popup = document.getElementById("popup-accueil");
-                popup.style.display = "flex";
-            }
+
+                if(urgenceModeActive) {
+                    if (popup) popup.remove();
+                    return;
+                }
+                else{
+                    popup.style.display = "flex";
+                }
         });
 
         document.getElementById("closePopupAccueil").addEventListener("click", function() {
