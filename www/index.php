@@ -691,6 +691,14 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             
             document.getElementById('btn-close-urgence').addEventListener('click', function() {
                 document.getElementById('urgence-popup').style.display = 'none';
+                urgenceModeActive = false;
+                document.getElementById('filter-type').value = '';
+                document.getElementById('filter-commune').value = '';
+                document.getElementById('filter-pmr').checked = false;
+                document.getElementById('filter-sensoriel').checked = false;
+                activeSearchQuery = '';
+                currentBounds = null;
+                loadEquipements();
             });
             
             document.getElementById('btn-geoloc').addEventListener('click', function() {
@@ -701,32 +709,39 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Localisation en cours...';
                 this.disabled = true;
-                
+
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const lat = position.coords.latitude;
                         const lon = position.coords.longitude;
-                        
+
                         if (userLocationMarker) {
                             map.removeLayer(userLocationMarker);
                         }
-                        
+
                         userLocationMarker = L.marker([lat, lon], { 
                             icon: userLocationIcon, 
                             zIndexOffset: 2000 
                         }).addTo(map);
                         userLocationMarker.bindPopup('<strong>Votre position</strong>').openPopup();
-                        
+
                         document.getElementById('urgence-popup').style.display = 'none';
-                        
+
                         urgenceModeActive = true;
-                        document.getElementById('filter-type').value = 'Stade';
                         document.getElementById('filter-pmr').checked = true;
-                        currentBounds = null;
-                        loadEquipements();
-                        
+                        document.getElementById('filter-sensoriel').checked = true;
+
+                        if (urgencesActives && urgencesActives.length > 0) {
+                            const targetCommune = urgencesActives[0].commune;
+                            currentBounds = null;
+                            loadEquipements();
+                        } else {
+                            currentBounds = null;
+                            loadEquipements();
+                        }
+
                         map.setView([lat, lon], 13);
-                        
+
                         document.getElementById('btn-geoloc').innerHTML = '<i class="fas fa-location-crosshairs"></i> Activer la géolocalisation';
                         document.getElementById('btn-geoloc').disabled = false;
                     },

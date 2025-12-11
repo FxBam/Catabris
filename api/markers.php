@@ -61,6 +61,12 @@ try {
             if ($sensoriel) {
                 $sql .= " AND acces_handi_sensoriel IS NOT NULL AND acces_handi_sensoriel != ''";
             }
+
+            if (isset($_GET['urgence']) && $_GET['urgence'] === '1') {
+                $sql .= " AND type_equipement = 'Salle'";
+                $sql .= " AND acces_handi_mobilite IS NOT NULL AND acces_handi_mobilite != ''";
+                $sql .= " AND acces_handi_sensoriel IS NOT NULL AND acces_handi_sensoriel != ''";
+            }
             
             $sql .= " ORDER BY RAND() LIMIT " . $pointsPerCell;
             
