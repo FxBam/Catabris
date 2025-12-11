@@ -33,7 +33,7 @@ if (!isset($_SESSION['user'])) {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const API_BASE = '/Catabris/api';
+        const API_BASE = '/api';
 
         $(function() {
             $("#navBar").load("navBar.php");

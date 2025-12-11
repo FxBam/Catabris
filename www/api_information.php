@@ -57,16 +57,16 @@ session_start();
                     <div class="api-examples">
                         <pre><code>
                             # Page 1 avec 20 équipements
-                            http://localhost/Catabris/api/equipements.php?page=1&limit=20
+                            http://localhost/api/equipements.php?page=1&limit=20
 
                             # Recherche avec pagination
-                            http://localhost/Catabris/api/equipements.php?page=1&limit=10&q=Paris
+                            http://localhost/api/equipements.php?page=1&limit=10&q=Paris
 
                             # Filtrage géographique
-                            http://localhost/Catabris/api/equipements.php?minLat=48.8&maxLat=48.9&minLon=2.3&maxLon=2.4
+                            http://localhost/api/equipements.php?minLat=48.8&maxLat=48.9&minLon=2.3&maxLon=2.4
 
                             # Récupérer un équipement spécifique
-                            http://localhost/Catabris/api/equipements.php?id=123</code></pre>
+                            http://localhost/api/equipements.php?id=123</code></pre>
                     </div>
                     <h3>Réponse JSON</h3>
                     <div class="api-json">
@@ -111,13 +111,13 @@ session_start();
                     <div class="api-examples">
                         <pre><code>
                             # Recherche simple
-                            http://localhost/Catabris/api/suggestions.php?q=stade
+                            http://localhost/api/suggestions.php?q=stade
 
                             # Avec limite personnalisée
-                            http://localhost/Catabris/api/suggestions.php?q=piscine&limit=5
+                            http://localhost/api/suggestions.php?q=piscine&limit=5
 
                             # Prioriser par position géographique
-                            http://localhost/Catabris/api/suggestions.php?q=terrain&minLat=48.8&maxLat=48.9&minLon=2.3&maxLon=2.4</code></pre>
+                            http://localhost/api/suggestions.php?q=terrain&minLat=48.8&maxLat=48.9&minLon=2.3&maxLon=2.4</code></pre>
                     </div>
                     <h3>Réponse JSON</h3>
                     <div class="api-json">

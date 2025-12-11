@@ -261,7 +261,7 @@ if (empty($users_result)) {
             }
 
             function loadUrgences() {
-                fetch('/Catabris/api/urgences.php', { credentials: 'same-origin' })
+                fetch('/api/urgences.php', { credentials: 'same-origin' })
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.urgences) {
@@ -292,7 +292,7 @@ if (empty($users_result)) {
                     return;
                 }
                 
-                fetch('/Catabris/api/urgences.php', {
+                fetch('/api/urgences.php', {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },
@@ -312,7 +312,7 @@ if (empty($users_result)) {
             function stopUrgence(id, commune) {
                 if (!confirm(`Arrêter le mode urgence pour ${commune} ?`)) return;
                 
-                fetch('/Catabris/api/urgences.php', {
+                fetch('/api/urgences.php', {
                     method: 'DELETE',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },

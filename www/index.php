@@ -108,7 +108,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
         
         <script>
             const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
-            ? '/Catabris/api'
+            ? '/api'
             : '/api';
             
             const map = L.map('map').setView([46.603354, 1.888334], 6);
