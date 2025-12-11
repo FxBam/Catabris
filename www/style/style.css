@@ -42,25 +42,38 @@ nav .logo a {
 /* Formulaire */
 .form-container {
     max-width: 400px;
-    margin: 0 auto;
+    width: min(400px, calc(100% - 2rem));
+    margin: 1rem auto;
     background: white;
-    padding: 2rem;
+    padding: 1.5rem 1.25rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
 }
 
 .form-container label {
     display: block;
-    margin: 0.5rem 0 0.2rem;
+    margin: 0.5rem 0 0.25rem;
     font-weight: bold;
 }
 
-.form-container input {
+.form-container input,
+.form-container textarea,
+.form-container select {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.75rem;
     margin-bottom: 1rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
 }
 
 #form-error {
@@ -1022,7 +1035,9 @@ body.favoris-page #favoris-container > p {
 body:not(:has(#map)) main,
 body.favoris-page main {
     align-items: stretch;
-    padding: 2rem;
+    padding-inline: 2rem; /* symmetric left/right padding */
+    padding-block: 2rem;
+    box-sizing: border-box;
     margin: 1.25rem auto;
     max-width: 1100px;
     min-width: 320px;
@@ -1046,6 +1061,8 @@ body.favoris-page main .card {
     background: transparent;
     box-shadow: none;
     padding: 0;
+    box-sizing: border-box;
+    padding-inline: 0.5rem; /* ensure inner content keeps some breathing room */
 }
 
 /* Make forms, tables and panels inside main look crisp */
