@@ -1,18 +1,26 @@
-# Utilise l’image officielle PHP avec Apache
 FROM php:8.2-apache
 
-# Installe les extensions nécessaires, dont PDO MySQL
-RUN docker-php-ext-install pdo pdo_mysql
+# Installation des extensions PHP nécessaires
+RUN docker-php-ext-install pdo pdo_mysql mysqli
 
-# Copie ton site dans le dossier Apache
-COPY ./www/ /var/www/html/
+# Copie de tout le projet
+COPY . /var/www/
 
-# Copie ton API si elle est dans un dossier séparé
-COPY ./api/ /var/www/html/api/
+# Le DocumentRoot d'Apache doit pointer vers /var/www/www (ton dossier www)
+RUN sed -i 's|/var/www/html|/var/www/www|g' /etc/apache2/sites-available/000-default.conf \
+    && sed -i 's|/var/www/html|/var/www/www|g' /etc/apache2/apache2.conf
 
-# Active mod_rewrite si nécessaire
-RUN a2enmod rewrite
+# Configuration des permissions
+RUN chown -R www-data:www-data /var/www \
+    && a2enmod rewrite
+
+# Configuration pour permettre les .htaccess
+RUN echo '<Directory /var/www/www>\n\
+    Options Indexes FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+</Directory>' >> /etc/apache2/apache2.conf
 
 EXPOSE 80
 
-COPY ./add_index.php /var/www/html/
+WORKDIR /var/www/www
