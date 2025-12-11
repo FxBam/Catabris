@@ -1584,3 +1584,27 @@ body.favoris-page main h1 {
     max-width: 400px;
     text-align: center;
 }
+
+.urgence-alert {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #b10000;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    z-index: 99999;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    animation: urgence-pulse 1.5s infinite;
+}
+
+@keyframes urgence-pulse {
+    0% { background-color: #b10000; }
+    50% { background-color: #ff0000; }
+    100% { background-color: #b10000; }
+}

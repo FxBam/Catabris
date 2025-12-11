@@ -34,6 +34,10 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 <button id="closePopupAccueil">J'ai compris</button>
             </div>
         </div>
+            <div id="urgence-alert" class="urgence-alert" style="display: none;">
+            🚨 <span id="urgence-alert-text"></span>
+        </div>
+
         <div id="navBar"></div>
         <div class="container">
             <div id="controlPanel" class="controlPanel"></div>
@@ -716,6 +720,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             document.getElementById('btn-close-urgence').addEventListener('click', function() {
                 document.getElementById('urgence-popup').style.display = 'none';
                 urgenceModeActive = false;
+                updateUrgenceAlert();
                 document.getElementById('filter-type').value = '';
                 document.getElementById('filter-commune').value = '';
                 document.getElementById('filter-pmr').checked = false;
@@ -753,6 +758,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
 
                         urgenceModeActive = true;
                         handlePopupAccueil();
+                        afficheUrgenceAlert();
                         document.getElementById('filter-pmr').checked = true;
                         document.getElementById('filter-sensoriel').checked = true;
 
@@ -800,6 +806,23 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             document.getElementById("popup-accueil").style.display = "none";
         });
 
+        function afficheUrgenceAlert() {
+            const alertBox = document.getElementById("urgence-alert");
+            const alertText = document.getElementById("urgence-alert-text");
+
+            if (!urgenceModeActive) {
+                alertBox.style.display = "none";
+                return;
+            }
+
+            if (urgencesActives.length > 0) {
+                const commune = urgencesActives[0].commune || "votre ville";
+                alertText.textContent = `Attention, urgence dans la ville de ${commune}`;
+                alertBox.style.display = "flex";
+            } else {
+                alertBox.style.display = "none";
+            }
+        }
 
         </script>
     </body>
