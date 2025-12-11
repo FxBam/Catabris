@@ -780,13 +780,15 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 $("#controlPanel").load("controlPanel.php");
             });
 
-            window.onload = function() {
-                document.getElementById("popup-accueil").style.display = "block";
-            };
+        window.addEventListener("load", function() {
+            const popup = document.getElementById("popup-accueil");
+            popup.style.display = "flex";
+        });
 
-            document.getElementById("closePopup").onclick = function() {
-                document.getElementById("popup-accueil").style.display = "none";
-            };
+        document.getElementById("closePopupAccueil").addEventListener("click", function() {
+            document.getElementById("popup-accueil").style.display = "none";
+        });
+
 
         </script>
     </body>
