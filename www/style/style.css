@@ -1588,7 +1588,7 @@ body.favoris-page main h1 {
 .urgence-alert {
     position: fixed;
     bottom: 20px;
-    left: 20px;
+    right: 20px;
     background: #b10000;
     color: white;
     padding: 12px 18px;
