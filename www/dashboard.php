@@ -250,9 +250,14 @@ if (empty($users_result)) {
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(function() {
-                $("#navBar").load("navBar.php");
-                $("#controlPanel").load("controlPanel.php");
-                loadUrgences();
+                // Load navBar first so it can inject window.API_BASE_URL from server env
+                $("#navBar").load("navBar.php", function() {
+                    // Normalize API base
+                    window.API_BASE = (window.API_BASE_URL || '').replace(/\/$/, '');
+                    // Now load control panel and urgences
+                    $("#controlPanel").load("controlPanel.php");
+                    loadUrgences();
+                });
             });
 
             function changePage(page) {
@@ -261,7 +266,7 @@ if (empty($users_result)) {
             }
 
             function loadUrgences() {
-                fetch('/api/urgences.php', { credentials: 'same-origin' })
+                fetch((window.API_BASE || '') + '/api/urgences.php', { credentials: 'same-origin' })
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.urgences) {
@@ -292,7 +297,7 @@ if (empty($users_result)) {
                     return;
                 }
                 
-                fetch('/api/urgences.php', {
+                fetch((window.API_BASE || '') + '/api/urgences.php', {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },
@@ -312,7 +317,7 @@ if (empty($users_result)) {
             function stopUrgence(id, commune) {
                 if (!confirm(`Arrêter le mode urgence pour ${commune} ?`)) return;
                 
-                fetch('/api/urgences.php', {
+                fetch((window.API_BASE || '') + '/api/urgences.php', {
                     method: 'DELETE',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },

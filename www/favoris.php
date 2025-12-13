@@ -33,12 +33,20 @@ if (!isset($_SESSION['user'])) {
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        const API_BASE = '/api';
+        // Default API base: try to detect subfolder (e.g. /Catabris)
+        let API_BASE = (function(){
+            const parts = window.location.pathname.split('/').filter(Boolean);
+            if (parts.length > 0) return '/' + parts[0] + '/api';
+            return '/api';
+        })();
 
         $(function() {
-            $("#navBar").load("navBar.php");
-            $("#controlPanel").load("controlPanel.php");
-            loadFavoris();
+            $("#navBar").load("navBar.php", function() {
+                window.API_BASE = (window.API_BASE_URL || '').replace(/\/$/, '');
+                if (window.API_BASE) API_BASE = window.API_BASE + '/api';
+                $("#controlPanel").load("controlPanel.php");
+                loadFavoris();
+            });
         });
 
         async function loadFavoris() {

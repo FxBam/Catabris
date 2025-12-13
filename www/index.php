@@ -107,9 +107,14 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
         </div>
         
         <script>
-            const API_BASE = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') 
-            ? '/api'
-            : '/api';
+            // Default API base: if app is served from a subfolder (e.g. /Catabris), use that folder + /api
+            let API_BASE = (function(){
+                const parts = window.location.pathname.split('/').filter(Boolean);
+                if (parts.length > 0) {
+                    return '/' + parts[0] + '/api';
+                }
+                return '/api';
+            })();
             
             const map = L.map('map').setView([46.603354, 1.888334], 6);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -769,8 +774,14 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
             });
             
             $(function() {
-                $("#navBar").load("navBar.php");
-                $("#controlPanel").load("controlPanel.php");
+                // Load navBar and update API_BASE if server provides API_BASE_URL
+                $("#navBar").load("navBar.php", function() {
+                    window.API_BASE = (window.API_BASE_URL || '').replace(/\/$/, '');
+                    if (window.API_BASE) {
+                        API_BASE = window.API_BASE + '/api';
+                    }
+                    $("#controlPanel").load("controlPanel.php");
+                });
             });
         </script>
     </body>
