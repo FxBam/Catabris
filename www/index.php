@@ -207,7 +207,7 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 
                 const bounds = map.getBounds();
                 const params = new URLSearchParams({
-                    limit: 4000,
+                    limit: 2000,
                     minLat: bounds.getSouth(),
                     maxLat: bounds.getNorth(),
                     minLon: bounds.getWest(),
