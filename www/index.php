@@ -122,19 +122,21 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
             
+            // Default icon (restored to previous image marker for visual consistency)
             const defaultIcon = L.icon({
-                iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
-                iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon-2x.png',
-                shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+                iconUrl: 'style/images/marker-icon.svg',
+                iconRetinaUrl: 'style/images/marker-icon.svg',
+                shadowUrl: 'style/images/marker-shadow.svg',
                 iconSize: [25, 41],
                 iconAnchor: [12, 41],
                 popupAnchor: [1, -34],
                 shadowSize: [41, 41]
             });
-            
+
+            // Keep a real icon for the selected marker so selection looks familiar
             const selectedIcon = L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-                shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+                iconUrl: 'style/images/marker-icon-red.svg',
+                shadowUrl: 'style/images/marker-shadow.svg',
                 iconSize: [25, 41],
                 iconAnchor: [12, 41],
                 popupAnchor: [1, -34],
@@ -234,19 +236,28 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     if (data.success) {
                         markers.clearLayers();
                         
+                        const toAdd = [];
                         data.markers.forEach(marker => {
                             if (marker.latitude && marker.longitude) {
-                                const leafletMarker = L.marker([marker.latitude, marker.longitude], { icon: defaultIcon });
-                                leafletMarker.equipementId = marker.id;
-                                
-                                leafletMarker.on('click', async function() {
+                                const m = L.marker([marker.latitude, marker.longitude], { icon: defaultIcon });
+                                m.equipementId = marker.id;
+
+                                m.on('mouseover', function() {
+                                    try { this.setZIndexOffset(2000); } catch (e) {}
+                                });
+                                m.on('mouseout', function() {
+                                    try { this.setZIndexOffset(0); } catch (e) {}
+                                });
+
+                                m.on('click', async function() {
                                     selectMarker(this);
                                     await loadEquipementDetails(this.equipementId);
                                 });
-                                
-                                markers.addLayer(leafletMarker);
+
+                                toAdd.push(m);
                             }
                         });
+                        if (toAdd.length) markers.addLayers(toAdd);
                         
                         console.log(`${data.markers.length} marqueurs chargés`);
                     }
