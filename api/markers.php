@@ -80,17 +80,19 @@ try {
     $candidatesLimit = min(8000, max(intval($limit * $candidateMultiplier), $limit));
     $sql .= " ORDER BY RAND() LIMIT " . intval($candidatesLimit);
 
-    // Server-side cache: key derived from query string and bounding box
-    $cacheTtl = 2; // seconds
-    $cacheDir = __DIR__ . '/../tmp_cache';
-    if (!is_dir($cacheDir)) @mkdir($cacheDir, 0777, true);
-    $cacheKey = 'markers_' . md5($_SERVER['QUERY_STRING'] ?? http_build_query($_GET));
-    $cacheFile = $cacheDir . '/' . $cacheKey . '.json';
-    if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTtl)) {
-        header('X-Cache: HIT');
-        header('Cache-Control: public, max-age=' . $cacheTtl);
-        echo file_get_contents($cacheFile);
-        exit;
+    // Optional server-side file cache: enabled when env CACHE_ENABLED=1
+    $cacheEnabled = getenv('CACHE_ENABLED') === '1';
+    $cacheTtl = intval(getenv('CACHE_TTL') ?: 2);
+    if ($cacheEnabled) {
+        $cacheDir = __DIR__ . '/../tmp_cache';
+        if (!is_dir($cacheDir)) @mkdir($cacheDir, 0777, true);
+        $cacheKey = 'markers_' . md5($_SERVER['QUERY_STRING'] ?? http_build_query($_GET));
+        $cacheFile = $cacheDir . '/' . $cacheKey . '.json';
+        if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTtl)) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo file_get_contents($cacheFile);
+            exit;
+        }
     }
 
     $stmt = $bdd->prepare($sql);
@@ -146,15 +148,13 @@ try {
 
     $response = json_encode(['success' => true, 'markers' => $markers], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
-    // store cache atomically
-    if (!empty($cacheFile)) {
+    // write cache if enabled
+    if (!empty($cacheEnabled) && !empty($cacheFile)) {
         $tmpFile = $cacheFile . '.' . uniqid('tmp', true);
         @file_put_contents($tmpFile, $response);
         @rename($tmpFile, $cacheFile);
     }
 
-    header('X-Cache: MISS');
-    header('Cache-Control: public, max-age=' . $cacheTtl);
     echo $response;
 } catch (Exception $e) {
     http_response_code(500);

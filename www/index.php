@@ -704,18 +704,12 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                     console.error('Erreur traitement focus param', e);
                 }
 
-                // Show welcome popup on first visit unless user is logged in or an urgence is active
-                try {
-                    const dismissed = localStorage.getItem('welcomeDismissed');
-                    if (!dismissed && !isUserLoggedIn && (!urgencesActives || urgencesActives.length === 0)) {
-                        document.getElementById('welcome-popup').style.display = 'flex';
-                    }
-                } catch (e) {
-                    // ignore localStorage errors
+                // Show welcome popup unless user is logged in or an urgence is active
+                if (!isUserLoggedIn && (!urgencesActives || urgencesActives.length === 0)) {
+                    document.getElementById('welcome-popup').style.display = 'flex';
                 }
 
                 document.getElementById('welcome-dismiss').addEventListener('click', function() {
-                    try { localStorage.setItem('welcomeDismissed', '1'); } catch (e) {}
                     document.getElementById('welcome-popup').style.display = 'none';
                 });
             });
