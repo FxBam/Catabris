@@ -105,6 +105,18 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 </div>
             </div>
         </div>
+
+        <div id="welcome-popup" class="urgence-popup" style="display: none;">
+            <div class="urgence-popup-content">
+                <div class="urgence-popup-header">
+                    <h2>Bienvenue sur Catabris !</h2>
+                </div>
+                <p>Sur ce site, vous pouvez rechercher et localiser des équipements sportifs dans différentes communes. Utile en cas d'urgence par exemple 😉...</p>
+                <div style="text-align: center; margin-top: 12px;">
+                    <button type="button" id="welcome-dismiss" class="btn-apply-filters">J'ai compris</button>
+                </div>
+            </div>
+        </div>
         
         <script>
             // Default API base: if app is served from a subfolder (e.g. /Catabris), use that folder + /api
@@ -667,16 +679,19 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 }
             }
             
-            map.whenReady(function() {
+            map.whenReady(async function() {
                 loadTypesEquipements();
                 loadUserFavoris();
-                checkUrgences();
+                // wait for urgences check so we know whether to show welcome popup
+                await checkUrgences();
+
                 const initialQuery = '<?= $query ?>';
                 if (initialQuery) {
                     loadEquipements(initialQuery);
                 } else {
                     loadEquipements();
                 }
+
                 try {
                     const params = new URLSearchParams(window.location.search);
                     if (params.has('focus')) {
@@ -688,6 +703,21 @@ $query = isset($_GET['q']) ? htmlspecialchars($_GET['q']) : '';
                 } catch (e) {
                     console.error('Erreur traitement focus param', e);
                 }
+
+                // Show welcome popup on first visit unless user is logged in or an urgence is active
+                try {
+                    const dismissed = localStorage.getItem('welcomeDismissed');
+                    if (!dismissed && !isUserLoggedIn && (!urgencesActives || urgencesActives.length === 0)) {
+                        document.getElementById('welcome-popup').style.display = 'flex';
+                    }
+                } catch (e) {
+                    // ignore localStorage errors
+                }
+
+                document.getElementById('welcome-dismiss').addEventListener('click', function() {
+                    try { localStorage.setItem('welcomeDismissed', '1'); } catch (e) {}
+                    document.getElementById('welcome-popup').style.display = 'none';
+                });
             });
             
             async function checkUrgences() {

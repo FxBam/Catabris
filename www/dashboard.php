@@ -252,8 +252,16 @@ if (empty($users_result)) {
             $(function() {
                 // Load navBar first so it can inject window.API_BASE_URL from server env
                 $("#navBar").load("navBar.php", function() {
-                    // Normalize API base
-                    window.API_BASE = (window.API_BASE_URL || '').replace(/\/$/, '');
+                    // Compute API base similar to index.php: prefer env (window.API_BASE_URL)
+                    // otherwise derive from the first path segment (app folder)
+                    try {
+                        const parts = window.location.pathname.split('/').filter(Boolean);
+                        const root = (window.API_BASE_URL && window.API_BASE_URL.length > 0) ? window.API_BASE_URL : (parts.length > 0 ? '/' + parts[0] : '');
+                        window.API_BASE = (root + '/api').replace(/\/+$|\/+/g, '/');
+                    } catch (e) {
+                        window.API_BASE = '/api';
+                    }
+
                     // Now load control panel and urgences
                     $("#controlPanel").load("controlPanel.php");
                     loadUrgences();
@@ -266,7 +274,7 @@ if (empty($users_result)) {
             }
 
             function loadUrgences() {
-                fetch((window.API_BASE || '') + '/api/urgences.php', { credentials: 'same-origin' })
+                fetch((window.API_BASE || '') + '/urgences.php', { credentials: 'same-origin' })
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.urgences) {
@@ -297,7 +305,7 @@ if (empty($users_result)) {
                     return;
                 }
                 
-                fetch((window.API_BASE || '') + '/api/urgences.php', {
+                fetch((window.API_BASE || '') + '/urgences.php', {
                     method: 'POST',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },
@@ -317,7 +325,7 @@ if (empty($users_result)) {
             function stopUrgence(id, commune) {
                 if (!confirm(`Arrêter le mode urgence pour ${commune} ?`)) return;
                 
-                fetch((window.API_BASE || '') + '/api/urgences.php', {
+                fetch((window.API_BASE || '') + '/urgences.php', {
                     method: 'DELETE',
                     credentials: 'same-origin',
                     headers: { 'Content-Type': 'application/json' },
